@@ -1,0 +1,3 @@
+// select objects on Layer
+string $Bob[] = `treeView -query -selectItem ("AnimLayerTabanimLayerEditor")`;
+string $layers[]={$Bob[0]}; layerEditorSelectObjectAnimLayer($layers);
