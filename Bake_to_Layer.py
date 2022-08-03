@@ -14,6 +14,7 @@ time_range = minTime, maxTime
 extract_lyr = mc.animLayer(animLayer_name, override=1, addSelectedObjects=1, extractAnimation="BaseAnimation")
 
 mc.bakeResults(sel, time=time_range, bakeOnOverrideLayer=True, preserveOutsideKeys=True)
+bake_container = mc.ls(sl=1, type="container")[0]
 
 if mc.animLayer(sel, q=1, affectedLayers=1) and mc.animLayer('BakeResults', q=1, exists=1):
     mc.rename('BakeResults', sel[0] + "_bk_lyr")
@@ -21,6 +22,9 @@ if mc.animLayer(sel, q=1, affectedLayers=1) and mc.animLayer('BakeResults', q=1,
 # Copy anim back to Base layer and delete
 mc.animLayer('BaseAnimation', e=1, copyAnimation=extract_lyr)
 mc.delete(extract_lyr)    
-    
-    
+
+# Delete Asset Container (made from baking)
+mc.select(bake_container)
+mc.DeleteSelectedContainers()
+
 mc.delete(sel, constraints=True)
