@@ -1,41 +1,51 @@
-tor_list = OpenMaya.MSelectionList()
-tor_list.add('pTorus14')
-tor_obj = tor_list.getDependNode(0)
-tor_xform = OpenMaya.MFnTransform(tor_obj)
-
-tor_quat = tor_xform.rotation(asQuaternion=True)
-tor_quat.normalizeIt()
-
-
-
-quat = xform.rotation(OpenMaya.MSpace.kWorld, asQuaternion=True)
-quat.normalizeIt()
-
-wop = OpenMaya.MTransformationMatrix(xform.asMatrix())
-xform.setRotation(MFntMainNode.rotation(OpenMaya.MSpace.kWorld, asQuaternion=True),OpenMaya.MSpace.kWorld)
-
 def make_quat(obj):
-    dagpath = OpenMaya.MDagPath()
-    
     list = OpenMaya.MSelectionList()
     list.add(obj)
-    path = list.getDagPath(0)
     #node_obj = list.getDependNode(0)
-    obj_xform = OpenMaya.MFnTransform(path)
-    obj_quat = obj_xform.rotation(OpenMaya.MSpace.kWorld, asQuaternion=True)
+    dag = list.getDagPath(0)
+    obj_dag = OpenMaya.MFnTransform(dag)
+    obj_quat = obj_dag.rotation(OpenMaya.MSpace.kWorld, asQuaternion=True)
     obj_quat.normalizeIt()
-    
-    return obj_xform, obj_quat
-    
 
-t1_xform, t1_quat = make_quat('pTorus17')
-t2_xform, t2_quat = make_quat('pTorus15')
+    return (obj_dag, obj_quat)
+
+def find_average_rot(obj_quat_1, obj_quat_2):
+    mid = OpenMaya.MQuaternion.slerp(obj_quat_1, obj_quat_2, 0.5)
+
+    return mid
 
 
-#te1_xform, te1_quat = make_quat('pToruse')
-te2_xform, te2_quat = make_quat('pTorus1P')
+def main():
+    sel = mc.ls(sl=1)
+    dag_dic = {}
+    dag_list = []
+    dag_quat_list = []
+    extra_mid_rot_list = []
+    i = 0
+    j = 0
+    # Make dic of items in sel
+    for obj in sel:
+        dag_obj, dag_quat = make_quat(obj)
+        dag_list.append(dag_obj)
+        dag_quat_list.append(dag_quat)
 
-mid = OpenMaya.MQuaternion.slerp(t1_quat, t2_quat, 0.5)
-te2_xform.setRotation(mid, OpenMaya.MSpace.kObject)
+    print("dag_list:", dag_list)
 
-wop = t1_xform.rotation(OpenMaya.MSpace.kWorld, asQuaternion=True)
+    # Extra ring mid rots
+    for previous, current in zip(dag_quat_list, dag_quat_list[1:]):
+        extra_mid = find_average_rot(previous, current)
+        extra_mid_rot_list.append(extra_mid)
+
+        cube = mc.polyCube()
+        dag_c, _ = make_quat(cube)
+        con = mc.pointConstraint(dag_list[j], dag_list[j+1], cube)
+        dag_c.setRotation(extra_mid, OpenMaya.MSpace.kWorld)
+
+        j = j + 1
+
+    # Avg between the extras, and paste it onto controls
+    for previous, current in zip(extra_mid_rot_list, extra_mid_rot_list[1:]):
+        avg_mid = find_average_rot(previous, current)
+
+        dag_list[i+1].setRotation(avg_mid, OpenMaya.MSpace.kWorld)
+        i = i + 1
