@@ -104,8 +104,13 @@ def constrained_loc():
 
 # Locator as Controller - Ctrl + Shift + l
 
-def controller_loc():
-    sel = mc.ls(sl=1)
+def controller_loc(selection):
+    # Convert argument to list if single item
+    if type(selection) != list:
+        sel = [selection]
+    else:
+        sel = selection
+    loc_ctrlr_list = []
 
     if sel:
         for obj in sel:
@@ -130,7 +135,45 @@ def controller_loc():
             mc.delete(pCon)
 
             pCon2 = mc.parentConstraint(loc, obj, w=1, skipRotate=skip_rot, skipTranslate=skip_tran)
+    
+            loc_ctrlr_list.append(loc)
+    return loc_ctrlr_list
 
+
+# Baked Loc - no controlling constraint
+
+def baked_loc(selection):
+        # Convert argument to list if single item
+    if type(selection) != list:
+        sel = [selection]
+    else:
+        sel = selection
+    loc_ctrlr_list = []
+
+    if sel:
+        for obj in sel:
+            # Get frame range from obj's keys
+            start_end_keys = get_frame_range(obj)
+
+            # Remove namespace, make loc
+            loc = make_clean_loc(obj)
+
+            # Use selection's rotateOrder
+            ro = mc.getAttr(obj + ".rotateOrder")
+            mc.setAttr(loc + ".rotateOrder", ro)
+
+            # Compare selected channels to list and append 'skipped' items to relevant list
+            skip_rot, skip_tran, sel_channels = find_channels_to_skip()
+
+            pCon = mc.parentConstraint(obj, loc, skipRotate=skip_rot, skipTranslate=skip_tran)
+
+            # Bake Controller Loc
+            if start_end_keys != []:
+                mc.bakeResults(loc, time=start_end_keys, attribute=sel_channels)
+            mc.delete(pCon)
+    
+            loc_ctrlr_list.append(loc)
+    return loc_ctrlr_list
 
 
 # Locator as Local Child - Win + l
