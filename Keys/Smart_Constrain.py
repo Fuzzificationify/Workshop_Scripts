@@ -15,4 +15,4 @@ if sel_channels:
             if channel[0] == 'r':
                 skip_rot.append(channel[1])
 
-pCon = mc.parentConstraint(sel[0], sel[1], skipRotate=skip_rot, skipTranslate=skip_tran)
+pCon = mc.parentConstraint(sel[0], sel[1], skipRotate=skip_rot, skipTranslate=skip_tran, mo=0)
