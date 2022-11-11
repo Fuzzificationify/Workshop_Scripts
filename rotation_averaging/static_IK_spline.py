@@ -1,3 +1,5 @@
+# Static IK Spline
+
 import maya.cmds as mc
 
 ctrls = mc.ls(sl=1)
@@ -22,11 +24,15 @@ for n, each in enumerate(ctrls):
     loc_list.append(loc)
     mc.parent(loc, jnt_list[n], relative=1)
 
+# for j, jnt in enumerate(jnt_list):
+    # if j < (len(jnt_list)-1):
+        # mc.aimConstraint(loc_list[j+1], ctrls[j], aimVector=(-1, 0, 0), upVector=(0, 1, 0), skip="x")
+    # else:
+        # mc.orientConstraint(jnt, ctrls[j], mo=1, skip="x")
+        
 for j, jnt in enumerate(jnt_list):
-    if j < (len(jnt_list)-1):
-        mc.aimConstraint(loc_list[j+1], ctrls[j], upVector=(0, -1, 0), skip="x")
-    else:
-        mc.orientConstraint(jnt, ctrls[j], mo=1, skip="x")
+
+    mc.orientConstraint(jnt, ctrls[j], mo=1, skip="x")
 
 mc.select(jnt_list[0], jnt_list[-1])
-mc.ikHandle('joint1', 'joint6', solver='ikSplineSolver', twistType='easeInOut')
+mc.ikHandle(jnt_list[0], jnt_list[-1], solver='ikSplineSolver', twistType='easeInOut', numSpans=4)
