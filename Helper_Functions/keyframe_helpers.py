@@ -13,14 +13,18 @@ def get_anim_curve():
     anim_curve = mc.keyframe(q=1, name=1, sl=1)
 
 
-def get_key_times(anim_curve):
-    
-    all_times = mc.keyframe(anim_curve, q=1, sl=1, timeChange=1) or []
+def get_key_times(anim_curve, sl_keys=True):
+    if sl_keys == True:
+        all_times = mc.keyframe(anim_curve, q=1, sl=1, timeChange=1) or []
+
+    if sl_keys == False:
+        all_times = mc.keyframe(anim_curve, q=1, timeChange=1) or []
+
     if all_times == []:
         return None
         
-    first_time, last_time = all_times[0], all_times[-1]
-    
+    first_time, last_time = min(all_times), max(all_times)
+
     return first_time, last_time, all_times
     
     
@@ -74,8 +78,24 @@ def get_minmax_scene_range():
     maxTime = mc.playbackOptions(q=1, animationEndTime=1)
     
     return minTime, maxTime
-    
-    
+
+def select_current_frame_key():
+    # Select Graph Editor Keys on Current Frame
+    time = mc.currentTime(q=1)
+
+    # Get GraphEditor Outliner Channel Selection
+    graphEditorObjects = mc.selectionConnection('graphEditor1FromOutliner', q=1, object=1)
+
+    mc.selectKey(clear=1)
+    mc.selectKey(graphEditorObjects, replace=1, time=(time,))
+
+def select_neighbour_key(direction):
+    graphEditorObjects = mc.selectionConnection('graphEditor1FromOutliner', q=1, object=1)
+
+    k = mc.findKeyframe(graphEditorObjects, which=direction)
+    mc.selectKey(graphEditorObjects, time=(k, k))
+
+
 # Copy values from goal to arrow, like a controlled Bake
 def matrix_constrain(goal, arrow, frame_range, rotate_order, onlyKeys=True):
     
