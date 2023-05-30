@@ -149,6 +149,8 @@ class SourcingWidget(QtWidgets.QWidget):
         self.item_strings = [str(self.qlist.item(i).text()) for i in range(self.qlist.count())]
         self.all_items = [self.qlist.item(i) for i in range(self.qlist.count())]
 
+
+
         return self.item_strings, self.all_items
 
     def add_target(self):
@@ -167,7 +169,7 @@ class SourcingWidget(QtWidgets.QWidget):
         for target in targets:
             self.qlist.takeItem(self.qlist.row(target))
 
-
+            
 class FrameRangeWidget(QtWidgets.QWidget):
 
     def __init__(self, Dialogue, TitleText="Frame Range"):
