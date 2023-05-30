@@ -10,6 +10,5 @@ objs_chans_list = []
 for obj in sel:
     for chan in appendix:
         objs_chans_list.append(obj + chan)
-    
-    
+
 mc.channelBox('mainChannelBox', edit=1, select=objs_chans_list)
