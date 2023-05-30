@@ -1,6 +1,9 @@
 # Refresh Channel Selection
 
-channels = mc.channelBox('mainChannelBox', q=1, sma=1)
+import maya.cmds as mc
+import maya.mel as mel
+
+channels = mel.eval('selectedChannelBoxAttributes;')
 
 sel = mc.ls(sl=1)
 objs_chans_list = []
