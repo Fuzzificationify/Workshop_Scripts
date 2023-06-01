@@ -5,7 +5,7 @@ sel = mc.ls(sl=1)
 sel_shape = mc.listRelatives(sel, children=1, shapes=1)[0]
 
 shading_grp = mc.listConnections(sel_shape, source=0, destination=1, type='shadingEngine')
-if shading_grp > 1:
+if len(shading_grp) > 1:
     print("More than one!!")
 
 mc.select(clear=1)
