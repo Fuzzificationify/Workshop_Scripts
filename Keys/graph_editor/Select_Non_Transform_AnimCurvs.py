@@ -1,19 +1,20 @@
+# Select all NON-transform channels
+
 import maya.cmds as mc
 
-animCurveNames = mc.keyframe(q=1, n=1)
+sel = mc.ls(sl=1)
 
-noTransform = []
+appendix = ['translateX', 'translateY', 'translateZ',
+             'rotateX', 'rotateY', 'rotateZ']
+objs_chans_list = []
 
-for item in animCurveNames:
-    if "translate" not in item and \
-        "rotateX" not in item and \
-        "rotateY" not in item and \
-        "rotateZ" not in item:
-        noTransform.append(item)
+# Find the non-trans channels
+animAttributes = mc.listAnimatable(sel)
+anim_attrs = [x.split('.')[-1] for x in animAttributes]
+non_trans_attrs = [y for y in anim_attrs if y not in appendix]
 
-#Clear Graph Selection
-mc.selectionConnection('graphEditor1FromOutliner', e=1, clear=1)
+for obj in sel:
+    for chan in non_trans_attrs:
+        objs_chans_list.append(obj + '.' + chan)
 
-#Select all non-transform animCurves
-for each in noTransform:
-    selection = mc.selectionConnection('graphEditor1FromOutliner', e=1, select=each)
+mc.channelBox('mainChannelBox', edit=1, select=objs_chans_list)
