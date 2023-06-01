@@ -72,14 +72,18 @@ def check_sel(direction):
         finder = "previous"
     if direction == "forward":
         finder = "next"
-        
+
     selected = mc.keyframe(q=1, selected=1) or []
 
     if not selected:
-        current_key = mc.currentTime(q=1)
-        graphEditorObjects = mc.selectionConnection('graphEditor1FromOutliner', q=1, object=1)
-        
-        k = mc.findKeyframe(graphEditorObjects, which=finder)
-        mc.selectKey(graphEditorObjects, time=(k,k))
-        
+        select_neighbour_key(finder)
+
         return 1
+
+
+def select_neighbour_key(direction):
+    graphEditorObjects = mc.selectionConnection('graphEditor1FromOutliner', q=1, object=1)
+
+    k = mc.findKeyframe(graphEditorObjects, which=direction)
+    mc.selectKey(graphEditorObjects, time=(k, k))
+
