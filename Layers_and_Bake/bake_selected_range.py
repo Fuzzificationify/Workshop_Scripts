@@ -1,4 +1,5 @@
-# Bake From Selected TimeRange  // ToDo: Rename resulting layer
+# Bake From Selected TimeRange  // ToDo: Rename resulting layer, Work if BaseAnimation layer doesn't exist
+# Bakes down constraints on current layer within time range
 
 import maya.cmds as mc
 import maya.mel as mel
@@ -18,14 +19,14 @@ if start == end-1:
 sel = mc.ls(sl=1)
 # Find selected animlayer
 sel_animLayer = mc.treeView('AnimLayerTabanimLayerEditor', q=True, selectItem=True)[0]
-
+# Bake to new Override Layer
 mc.bakeResults(sel, destinationLayer=1, time=(start, end), bakeOnOverrideLayer=1)
 
 # Delete Constraint
 child_con = mc.listRelatives(sel, children=1, type='constraint')
 mc.delete(child_con, constraints=1)
 
-# Turn off override layer one frame before and after bake range
+# Turn off override layer one frame before and after bake range // end value is 1 too high from query so I compensate here
 mc.setKeyframe('BakeResults.weight', time=(start-1), value=0)
 mc.setKeyframe('BakeResults.weight', time=start, value=1)
 mc.setKeyframe('BakeResults.weight', time=(end-1), value=1)
