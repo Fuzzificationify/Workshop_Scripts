@@ -21,10 +21,4 @@ if mc.animLayer(sel, q=1, affectedLayers=1) and mc.animLayer('BakeResults', q=1,
 
 # Copy anim back to Base layer and delete
 mc.animLayer('BaseAnimation', e=1, copyAnimation=extract_lyr)
-mc.delete(extract_lyr)    
-
-# Delete Asset Container (made from baking)
-mc.select(bake_container)
-mc.DeleteSelectedContainers()
-
-mc.delete(sel, constraints=True)
+mc.delete(extract_lyr) 
