@@ -1,3 +1,6 @@
+# Makes a nurbs text number ontop of the global controls to show the first frame
+# It was used when lots of rigs were on cycles and I wanted to tell how offset they were
+
 def find_globals():
     dogs = pm.ls("chrWartDog*:*", type="rigMasterShapeNode")
     controls = []
