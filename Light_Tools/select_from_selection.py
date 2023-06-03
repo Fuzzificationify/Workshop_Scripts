@@ -13,6 +13,15 @@ pm.select(ctrl_list)
 
 
 
+# Select global
+import pymel.core as pm
+
+sel = pm.ls(sl=1)[0]
+name_space = sel.namespace()
+
+global_ctrl = name_space + "ctrl_m_world"
+pm.select(global_ctrl)
+
 
 
 import pymel.core as pm
