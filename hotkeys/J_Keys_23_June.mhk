@@ -1,0 +1,2025 @@
+//Maya Preference 2022 (Release 1)
+//
+//
+
+//
+// The runtime commands referenced by the hotkeys
+//
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Graph Editor.Key Tools"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx "graphEditor"
+	-commandLanguage "python"
+	-command ("# Negative Share Keys\n\ngraphEditorObjects = mc.selectionConnection('graphEditor1FromOutliner', q=1, object=1)\n\nkey_range = mc.keyframe(q=1, selected=1)\n\n# Find curve with fewest keys (within selection range)\nkey_num = []\nfor curv in graphEditorObjects:\n    curv_range = mc.keyframe(curv, q=1, selected=1) #If check incase no keys on a curve\n    if curv_range:\n        keys = len(curv_range)\n        key_num.append(keys)\n\nmin_val = min(key_num)\nmin_indx = key_num.index(min_val)\n\nkey_keyframes = mc.keyframe(graphEditorObjects[min_indx], q=1)\ncapped_keyframes = [x for x in key_keyframes if key_range[0] <= x <= key_range[-1]]\n\n# Removing fewest keys curve from list to loop over\ngraphEditorObjects.remove(graphEditorObjects[min_indx])\n\nfor curv in graphEditorObjects:\n    for key in capped_keyframes:\n        mc.setKeyframe(curv, time=(key, key), insert=1)\n\n    for time in range(int(key_range[0]), int(key_range[-1])):\n        if time not in capped_keyframes:\n            mc.cutKey(curv, time=(time, time))")
+	Negative_Share_keys;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Graph Editor.Key Tools"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx "graphEditor"
+	-commandLanguage "python"
+	-command ("# Keyframe Tweaker - relative to amplitude of whole animcurve\n\nmultiplier = 20.0\nsign = -1.0\n\nanim_curv = mc.keyframe(q=1, name=1, selected=1)\n\ncurv_values = sorted(mc.keyframe(anim_curv, q=1, valueChange=1))\nmin_val, max_val = curv_values[0], curv_values[-1]\n\nval_dif = max_val - min_val\nmove_factor = sign*(val_dif / multiplier)\n\nmc.keyframe(e=1, relative=1, valueChange=move_factor)")
+	down_val_tweaker;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Selection"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "python"
+	-command ("import rigMan.libs.v2.namespace as namespace\nimport scanlineAPI\nimport maya.cmds as cmds\nimport animation.animationSelections as animationSelections\n\n\nsSelections = cmds.ls(sl=True)\nif not sSelections :\n    scanlineAPI.logError(\"Nothing selected\")\nelse :\n    \n    sAllControllers = []\n    sNamespaces = []\n    for sSelection in sSelections :\n        sNamespace = namespace.getNamespace(sSelection, bTrailingColon=False)\n        if sNamespace and not sNamespace in sNamespaces :\n            sNamespaces.append(sNamespace)\n    sAllControllers = animationSelections.getAllRigNodesFromNamespace(sNamespaces)\n\n    if not sAllControllers :\n        scanlineAPI.logError(\"No controllers found\")\n    else :\n        cmds.select(sAllControllers)")
+	SelectRig;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Graph Editor.Key Tools"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx "graphEditor"
+	-commandLanguage "python"
+	-command ("if mc.contextInfo(\"latticeKeyDeform1\", exists=1):\n\n\tmc.latticeDeformKeyCtx(\"latticeKeyDeform1\", e=1, latticeColumns=3, latticeRows=3)\n\tmc.setToolTo(\"latticeKeyDeform1\")\n\nelse:\n\tmc.latticeDeformKeyCtx(\"latticeKeyDeform1\", latticeColumns=3, latticeRows=3)\n\tmc.setToolTo(\"latticeKeyDeform1\")")
+	lattice_key_deform_33;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Viewport Animation.ChannelBox"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "python"
+	-command ("import maya.cmds as mc\n\ndef del_keys_from_channelbox(all=0):\n    channels = mc.channelBox('mainChannelBox', q=1, sma=1)\n    if all==0:\n        time_ = mc.currentTime(q=1)\n    else:\n        time_ = \":\"\n\n    mc.cutKey(attribute=channels, time=(time_,))\n    \n    \ndel_keys_from_channelbox(all=1)")
+	del_keys_from_channelbox_ALL;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Viewport Animation.ChannelBox"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "python"
+	-command ("import maya.cmds as mc\n\nsel = mc.ls(sl=1)\n\nappendix = ['.rx', '.ry', '.rz']\nnewSel = []\n\nchannels = mc.channelBox('mainChannelBox', q=1, sma=1)\n        \nif (channels is None) or (all(elem not in channels  for elem in ['rx', 'rz', 'ry'])):\n    for ctrl in sel:\n  \n        for each in appendix:\n        \n            newSel.append(ctrl + each)\n           \n    mc.channelBox('mainChannelBox', edit=1, select=newSel)\n    \nelif len(channels) == 3:\n    for ctrl in sel:\n        mc.channelBox('mainChannelBox', edit=1, select=ctrl + '.rx')\n        \nelif 'rx' in channels:    \n    for ctrl in sel:\n        mc.channelBox('mainChannelBox', edit=1, select=ctrl + '.ry')\n        \nelif 'ry' in channels:    \n    for ctrl in sel:\n        mc.channelBox('mainChannelBox', edit=1, select=ctrl + '.rz')\n        \nelif 'rz' in channels:\n        for ctrl in sel:\n    \n            for each in appendix:\n        \n                newSel.append(ctrl + each)\n            \n        mc.channelBox('mainChannelBox', edit=1, select=newSel)")
+	Select_Rotates;
+  
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Rigging"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "python"
+	-command ("import maya.cmds as mc\nfrom Helper_Functions import keyframe_helpers as kh\n\nselObj = mc.ls(sl=1)\n\n# Get Time Slider Range\nminTime = mc.playbackOptions(q=1, minTime=1)\nmaxTime = mc.playbackOptions(q=1, maxTime=1)\n\n# Get Keyframe Range\nstart_keyframe, end_keyframe, _ = kh.get_key_times(selObj, sl_keys=False)\n\n# Find the largest range between Time Slider and Keyframes\nif start_keyframe != None:\n    start_time = min(minTime, start_keyframe)\n    end_time = max(maxTime, end_keyframe)\nelse:  # If there's no keys\n    start_time = minTime\n    end_time = maxTime\n\n    # Sets keys on xform channels as mc.bake will only work when there's at least 1 key\n    mc.setKeyframe(selObj, t=start_time, respectKeyable=1, at=('t', 'r'))\n\nbake_range = start_time, end_time\n\n# Bake\nmc.bakeResults(selObj, t=bake_range)\n\n# Delete Constraint\nchild_con = mc.listRelatives(selObj, children=1, type='constraint')\nmc.delete(child_con, constraints=1)\n")
+	my_simple_bake;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Graph Editor.Move Keys"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx "graphEditor"
+	-commandLanguage "python"
+	-command ("from Keys.graph_editor import keyframe_selections\n\nkeyframe_selections.step_through_keys(direction=\"back\", expand=1)")
+	Keys_expand_back;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Graph Editor"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx "graphEditor"
+	-commandLanguage "python"
+	-command ("import maya.cmds as mc\nimport maya.mel as mel\n\n\ncurveSelection = mc.keyframe(query=True, selected=True, name=True)\n\nif curveSelection:\n    mel.eval(\"isolateAnimCurve true graphEditor1FromOutliner graphEditor1GraphEd\")\n\nelse:\n    mel.eval(\"isolateAnimCurve false graphEditor1FromOutliner graphEditor1GraphEd\")")
+	Isolate_animCurve;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Rigging"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "python"
+	-command ("import maya.cmds as mc\n\nselObj = mc.ls(sl=1)\n\n# Delete Constraint\nchild_con = mc.listRelatives(selObj, children=1, type='constraint')\nmc.delete(child_con, constraints=1)")
+	Delete_Constraint;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Viewport Animation.ChannelBox"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "python"
+	-command ("# Select all NON-transform channels\n\nimport maya.cmds as mc\n\nsel = mc.ls(sl=1)\n\nappendix = ['translateX', 'translateY', 'translateZ',\n             'rotateX', 'rotateY', 'rotateZ']\nobjs_chans_list = []\n\n# Find the non-trans channels\nanimAttributes = mc.listAnimatable(sel)\nanim_attrs = [x.split('.')[-1] for x in animAttributes]\nnon_trans_attrs = [y for y in anim_attrs if y not in appendix]\n\nfor obj in sel:\n    for chan in non_trans_attrs:\n        objs_chans_list.append(obj + '.' + chan)\n\nmc.channelBox('mainChannelBox', edit=1, select=objs_chans_list)")
+	Select_non_trans_channels;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Graph Editor.Move Keys"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx "graphEditor"
+	-commandLanguage "python"
+	-command ("import maya.cmds as mc\n\nmc.keyframe(edit=1, relative=1, option='over', animation='keys', timeChange=1)")
+	Move_key_pos1;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Viewport Animation"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "python"
+	-command ("import maya.mel as mel\nimport pymel.core as pm\nchannels = mel.eval('selectedChannelBoxAttributes;')\n\n\n\nsel = pm.ls(sl=1)\n\nfor obj in sel:\n    for chan in channels:\n        value = obj.attr(chan).get(0)\n        if value != 0:\n            obj.attr(chan).set(0)\n        else:\n            obj.attr(chan).set(1)\n        ")
+	channel_binary_toggle;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Graph Editor"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx "graphEditor"
+	-commandLanguage "python"
+	-command ("import maya.cmds as mc\n\ngraphEditorObjects = mc.selectionConnection('graphEditor1FromOutliner', q=1, object=1)\nk = mc.findKeyframe(graphEditorObjects, which=\"next\")\nmc.currentTime(k)")
+	next_key;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Selection"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "mel"
+	-command ("// select objects on Layer\nstring $Bob[] = `treeView -query -selectItem (\"AnimLayerTabanimLayerEditor\")`;\nstring $layers[]={$Bob[0]}; layerEditorSelectObjectAnimLayer($layers);")
+	SelectObjectsOnLayer;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Graph Editor"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx "graphEditor"
+	-commandLanguage "mel"
+	-command ("nextOrPreviousFrame \"previous\";")
+	previous_frame;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Graph Editor.Move Keys"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx "graphEditor"
+	-commandLanguage "python"
+	-command ("from Keys.graph_editor import keyframe_selections\n\nkeyframe_selections.step_through_keys(direction=\"forward\", expand=1)")
+	Keys_expand_forward;
+
+runTimeCommand
+	-label ""
+	-annotation "Locators_On_Off"
+	-longAnnotation ""
+	-category "Custom Scripts.Locators"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "python"
+	-command ("from mpc.maya.matchmoveTools.hotkeys import showToggle\nshowToggle.showToggle(arg='locators')")
+	locators_toggle_command;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Graph Editor"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx "graphEditor"
+	-commandLanguage "mel"
+	-command ("nextOrPreviousFrame \"next\";")
+	next_frame;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Locators"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "python"
+	-command ("from Light_Tools import locator_creations\n\nsel = mc.ls(sl=1)\nlocator_creations.controller_loc(sel)")
+	Create_Locator_As_Ctrlr;
+  
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Graph Editor.Move Keys"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx "graphEditor"
+	-commandLanguage "python"
+	-command ("import maya.cmds as mc\n\nmc.keyframe(edit=1, relative=1, option='over', animation='keys', timeChange=-1)")
+	Move_key_neg1;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Selection"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "mel"
+	-command ("// return selected layer\nstring $Bob[] = `treeView -query -selectItem (\"AnimLayerTabanimLayerEditor\")`;\n// select layer\nanimLayerEditorOnSelect $Bob[0] 1;\n")
+	ReselectAnimLayerBecauseTheySuck;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Rigging"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "python"
+	-command ("import maya.cmds as mc\n\nsel = mc.ls(sl=1)\nsel_channels = mc.channelBox('mainChannelBox', q=1, sma=1)\n\nchannels_list = ['tx', 'ty', 'tz', 'rx', 'ry', 'rz']\nskip_rot = []\nskip_tran = []\n\n\n\nif sel_channels:\n    for channel in channels_list:\n        if channel not in sel_channels:\n            if channel[0] == 't':\n                skip_tran.append(channel[1])\n            if channel[0] == 'r':\n                skip_rot.append(channel[1])\n\npCon = mc.parentConstraint(sel[0], sel[1], skipRotate=skip_rot, skipTranslate=skip_tran, mo=0)")
+	Parent_Constrain_no_offset;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Panels"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "python"
+	-command ("import maya.cmds as mc\nimport maya.mel as mel\n\nfocus = mc.getPanel(wf=1)\ngraphEdit = mc.getPanel(scriptType='graphEditor')\n\nif not graphEdit:\n    graphEdit = mel.eval(\"GraphEditor;\")\n\nmc.scriptedPanel(graphEdit[0], edit=1, rp=focus)\n\nmc.animCurveEditor('graphEditor1GraphEd', exists=True)")
+	panel_transform_graph;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Panels"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "python"
+	-command ("import maya.cmds as mc\n\ntry:\n    if mc.ls(my_panel):\n        mc.deleteUI(my_panel, panel=True)\nexcept:\n    pass\n\nmy_panel = mc.modelPanel(camera=\"persp\")\nyep = mc.modelPanel(my_panel, edit=True, replacePanel='graphEditor1')")
+	panel_tranform_modelP;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Graph Editor.Select Keys"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx "graphEditor"
+	-commandLanguage "python"
+	-command ("from Keys.graph_editor import key_arc_select\n\nkey_arc_select.main(sign=\"positive\")")
+	key_arc_select_pos;
+  
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Viewport Animation"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "python"
+	-command ("# Centre selection to current camera\nimport maya.cmds as mc\n\nsel = mc.ls(sl=1)\n\ncurrent_panel = mc.getPanel(withFocus=1)\ncam = mc.modelPanel(current_panel, query=True, camera=True)\n\nmc.xform(sel, rotation=(0, 0, 0), translation=(0, 0, 0))\nmc.parent(sel, cam, relative=1)\nmc.xform(sel, t=(0,0,-10))\nmc.parent(sel, world=1)\n#mc.xform(sel, rotation=(0, 0, 0))\n\n#pCon = mc.parentConstraint(cam, sel, mo=0)[0]\n#mel.eval('setAttr \"{0}.target[0].targetOffsetTranslateZ\" -10;'.format(pCon))\n#mc.DeleteConstraints(pCon)")
+	centre_sel_to_cam;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Viewport Animation"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "python"
+	-command ("import pymel.core as pm\n\npm.ogs(p=True)\n")
+	pause_viewport;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Graph Editor.Move Keys"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx "graphEditor"
+	-commandLanguage "python"
+	-command ("from Keys.graph_editor import keyframe_selections\n\nkeyframe_selections.step_through_keys(direction=\"forward\", subtract=1)")
+	Keys_subtract_forward;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Locators"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "python"
+	-command ("# Locator as Local Controller - Win + Shift + l\n\nimport maya.cmds as mc\n\ndef controller_childed_loc():\n    sel = mc.ls(sl=1)\n    sel_channels = mc.channelBox('mainChannelBox', q=1, sma=1)\n\n    channels_list = ['tx', 'ty', 'tz', 'rx', 'ry', 'rz']\n\n\n    if sel:\n        for obj in sel:\n            # Get frame range from obj's keys\n            get_frame_range(obj)\n\n            # Remove namespace, make loc\n            loc_name = remove_namespace(obj)\n            loc = mc.spaceLocator(n=loc_name)[0]\n\n            # Put loc in parent of sel's space and copy attributes\n            find_parent_and_parent(obj, loc)\n\n            # Compare selected channels to list and append 'skipped' items to relevant list\n            skip_rot, skip_tran = find_channels_to_skip(channels_list)\n\n            #pCon = mc.parentConstraint(obj, loc, skipRotate=skip_rot, skipTranslate=skip_tran)\n            pCon = mc.parentConstraint(obj, loc)\n\n            # Bake Controller Loc\n            #mc.bakeResults(loc, time=firstLastKeys, attribute=sel_channels)\n            mc.bakeResults(loc, time=firstLastKeys)\n            mc.delete(pCon)\n\n            pCon2 = mc.parentConstraint(loc, obj, w=1, skipRotate=skip_rot, skipTranslate=skip_tran)\n            mc.select(loc)\n\ndef find_channels_to_skip(channels_list):\n    # Compare selected channels to list and append 'skipped' items to relevant list\n    sel_channels = mc.channelBox('mainChannelBox', q=1, sma=1)\n    skip_rot = []\n    skip_tran = []\n\n    if sel_channels:\n        for channel in channels_list:\n            if channel not in sel_channels:\n                if channel[0] == 't':\n                    skip_tran.append(channel[1])\n                if channel[0] == 'r':\n                    skip_rot.append(channel[1])\n\n    return skip_rot, skip_tran\n\n\ndef remove_namespace(obj):\n    obj_nn = obj.rpartition(\":\")[2]\n    loc_name = obj_nn + \"_loc\"\n\n    return loc_name\n\n\ndef get_frame_range(obj):\n    fullKeyList = sorted(mc.keyframe(obj, q=1) or [])\n    if fullKeyList != []:\n        firstLastKeys = fullKeyList[0], fullKeyList[-1]\n    else:\n        firstLastKeys = []\n\n    return firstLastKeys\n\n\ndef find_parent_and_parent(obj, loc):\n\n    parent_node = mc.pickWalk(obj, d=\"up\")[0]\n    # Parent unless it's parent is world\n    if parent_node != obj:\n        mc.parent(loc, parent_node, relative=1)\n\n    # Copy Attrs\n    mc.copyAttr(obj, loc, values=1)\n\n\ncontroller_childed_loc()\n")
+	Locator_as_Local_Controller;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Graph Editor.Key Tools"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx "graphEditor"
+	-commandLanguage "python"
+	-command ("import maya.cmds as mc\n\nif mc.contextInfo(\"retimeKey1\", exists=1):\n    mc.retimeKeyCtx(\"retimeKey1\", e=1)\n    mc.setToolTo(\"retimeKey1\")\n\nelse:\n    mc.retimeKeyCtx(\"retimeKey1\")\n    mc.setToolTo(\"retimeKey1\")\n\nkey_times = sorted(mc.keyframe(q=1, sl=1))\nfirst_key, last_key = key_times[0], key_times[-1]\n\nfirst_funky_time = first_key / 24\nlast_funky_time = last_key / 24\nmid_time = (first_funky_time + last_funky_time) / 2\n\nmc.retimeHelper(frame=first_funky_time)\nmc.retimeHelper(frame=last_funky_time)\nmc.retimeHelper(frame=mid_time)\n\nprint(\"????\")\n")
+	retime_keys_from_sel;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Graph Editor.Key Tools"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx "graphEditor"
+	-commandLanguage "python"
+	-command ("import maya.cmds as mc\n\ncuv = None\n\ntry:  \n    mc.delete(\"temp_animCurv\")\nexcept:\n    pass")
+	delete_slider_cuv;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Graph Editor.Select Keys"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx "graphEditor"
+	-commandLanguage "python"
+	-command ("# Select Graph Editor Keys on Current Frame\n\ntime = mc.currentTime(q=1)\n\n#Get GraphEditor Outliner Channel Selection\ngraphEditorObjects = mc.selectionConnection('graphEditor1FromOutliner', q=1, object=1)\n\nmc.selectKey(clear=1)\nmc.selectKey(graphEditorObjects, replace=1, time=(time,))\n")
+	Select_Current_Time_Keys;
+  
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Graph Editor"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx "graphEditor"
+	-commandLanguage "python"
+	-command ("import maya.cmds as mc\n\ngraphEditorObjects = mc.selectionConnection('graphEditor1FromOutliner', q=1, object=1)\nk = mc.findKeyframe(graphEditorObjects, which=\"previous\")\nmc.currentTime(k)")
+	previous_key;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Locators"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "python"
+	-command ("from Light_Tools import locator_creations\n\nsel = mc.ls(sl=1)\nlocator_creations.constrained_loc(sel)")
+	Create_Locator_Constrained;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Viewport Animation.ChannelBox"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "python"
+	-command ("# Select all transform channels\n\nimport maya.cmds as mc\n\nsel = mc.ls(sl=1)\n\nappendix = ['.tx', '.ty', '.tz', '.rx', '.ry', '.rz']\nobjs_chans_list = []\n\nfor obj in sel:\n    for chan in appendix:\n        objs_chans_list.append(obj + chan)\n    \n    \nmc.channelBox('mainChannelBox', edit=1, select=objs_chans_list)")
+	Select_All_Transforms;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Viewport Animation"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "mel"
+	-command ("ogs -pause;")
+	unPause_viewport;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Selection Filter"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "mel"
+	-command ("setObjectPickMask \"All\" 1;")
+	selection_filter_All;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Graph Editor.Move Keys"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx "graphEditor"
+	-commandLanguage "python"
+	-command ("from Keys.graph_editor import keyframe_selections\n\nkeyframe_selections.step_through_keys(direction=\"back\", subtract=1)")
+	Keys_subtract_back;
+  
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Viewport Animation"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "python"
+	-command ("import maya.cmds as mc\n\ntimeSlider = mc.currentTime(q=1)\n\nminTime = mc.playbackOptions(q=1, minTime=1)\nmaxTime = mc.playbackOptions(q=1, maxTime=1)\n\nminTime = mc.playbackOptions(minTime=minTime+2)\nmaxTime = mc.playbackOptions(maxTime=maxTime-2)")
+	Frame_Time_Slider_Shrink;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Graph Editor"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx "graphEditor"
+	-commandLanguage "python"
+	-command ("mc.keyframe(animation=\"keys\", absolute=1, valueChange=0)")
+	Zero_keys_from_graph_sel;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Viewport Animation.ChannelBox"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "python"
+	-command ("# Zero selected channels\n\nimport maya.cmds as mc\n\nsel = mc.ls(sl=1)\nchannels = mc.channelBox('mainChannelBox', q=1, sma=1)\ncurrent_time = mc.currentTime(q=1)\n\nfor obj in sel:\n    for chan in channels:\n        mc.setAttr(obj + \".\" + chan, 0)\n\n\n")
+	zero_sel_channels;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Graph Editor.Select Keys"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx "graphEditor"
+	-commandLanguage "python"
+	-command ("# Set the current time to selected keyframe\n\nsel_key = sorted(mc.keyframe(q=1, selected=1))\nmin_key, max_key = sel_key[0], sel_key[-1]\n\ncurrent_time = mc.currentTime(q=1)\n \nmin_dif = abs(min_key - current_time)\nmax_dif = abs(max_key - current_time)\n\nif min_dif >= max_dif:\n    print('min_key')\n    mc.currentTime(max_key)\n    \nif min_dif < max_dif:\n    print('max_key')\n    mc.currentTime(min_key)")
+	set_time_to_closest_sel;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Graph Editor.Key Tools"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx "graphEditor"
+	-commandLanguage "python"
+	-command ("import maya.cmds as mc\nimport pymel.core as pm\n\nsel = mc.ls(sl=1)[0]\ncurve_name = mc.keyframe(sel, q=1, n=1, sl=1)\n\nkeys = mc.keyframe(curve_name, q=1, sl=1, indexValue=1)  # Get index\nkeyTimes = cmds.keyframe(curve_name, q=True, index=(keys[0], keys[-1]))   # Get time from index\n\n\ntry:\n    cuv\nexcept:\n    cuv = None\n\nif cuv == None:\n   dup_cuv = mc.duplicate(curve_name, name=\"temp_animCurv\")\n   cuv = pm.ls(dup_cuv)[0]\n\n   print(t1-t0)\n\n\n\nfor i, key in enumerate(keys):\n    mc.selectKey(curve_name, index=(keys[i], keys[i]))\n    time_change = keyTimes[i] + 1\n\n    if pm.nodeType(cuv) == 'animCurveTL':\n        val = pm.nodetypes.AnimCurveTL.evaluate(cuv, time_change)\n    elif pm.nodeType(cuv) == 'animCurveTA':\n        val = pm.nodetypes.AnimCurveTA.evaluate(cuv, time_change)\n        val = val * 57.29577951308232     # Need to mutiply by 1 radian for some reason\n    elif pm.nodeType(cuv) == 'animCurveTU':\n        val = pm.nodetypes.AnimCurveTU.evaluate(cuv, time_change)\n\n    mc.keyframe(animation='keys', option='over', absolute=True, timeChange=time_change, valueChange=val)\n\n\nmc.selectKey(curve_name, index=(keys[0], keys[-1]))")
+	slide_key_right;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Viewport Animation"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "python"
+	-command ("import maya.cmds as mc\n\npan = mc.getPanel(wf=1)\n\nloc_vis = mc.modelEditor(pan, q=1, locators=1)\n\nif loc_vis:\n    mc.modelEditor(pan, e=1, locators=0)\nelse:\n    mc.modelEditor(pan, e=1, locators=1)")
+	toggle_loc_vis;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Viewport Animation.ChannelBox"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "python"
+	-command ("# Refresh Channel Selection\n\nchannels = mc.channelBox('mainChannelBox', q=1, sma=1)\n\nsel = mc.ls(sl=1)\nobjs_chans_list = []\n\nfor obj in sel:\n    for chan in channels:\n        objs_chans_list.append(obj + '.' + chan)\n\nmc.channelBox('mainChannelBox', edit=1, select=objs_chans_list)")
+	refresh_channel_selection;
+  
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Graph Editor.Select Keys"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx "graphEditor"
+	-commandLanguage "python"
+	-command ("import maya.cmds as mc\n\nif mc.keyframe(q=1, sl=1):\n    animCurveNames = mc.keyframe(q=1, n=1)\n    mc.selectKey(animCurveNames)\n\nelse:\n    graphEditorObjects = mc.selectionConnection('graphEditor1FromOutliner', q=1, object=1)\n    mc.selectKey(graphEditorObjects)")
+	Select_Active_animCurve;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Locators"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "python"
+	-command ("from Light_Tools import locator_creations\n\nsource = mc.ls(sl=1)[:-1]\nspace_obj = mc.ls(sl=1)[-1]\nlocator_creations.controller_in_sel_space(source, space_obj)")
+	Locator_as_controller_in_sel_space;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Graph Editor.Key Tools"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx "graphEditor"
+	-commandLanguage "python"
+	-command ("import maya.cmds as mc\n\nanim_curves = mc.keyframe(q=1, n=1)\n\nfor anim_curve in anim_curves:\n\n    selKeyVal = mc.keyframe(anim_curve, q=1, sl=1, valueChange=1)\n    firstKeyIndex = mc.keyframe(anim_curve, q=1, sl=1, indexValue=1)[0]\n    lastKeyIndex = mc.keyframe(anim_curve, q=1, sl=1, indexValue=1)[-1]\n    prevKeyIndex = firstKeyIndex - 1\n\n    prevKeyVal = mc.keyframe(anim_curve, q=1, index=(prevKeyIndex,prevKeyIndex), valueChange=1)\n\n    valDiff = prevKeyVal[0] - selKeyVal[0]\n\n    mc.keyframe(anim_curve, e=1, index=(firstKeyIndex, lastKeyIndex), relative=1, valueChange=valDiff)\n")
+	animCurveSnap;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Graph Editor.Key Tools"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx "graphEditor"
+	-commandLanguage "python"
+	-command ("from Keys.graph_editor import graph_editor_keys\n\ngraph_editor_keys.simplify_keys()")
+	simplify_keys;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Viewport Animation"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "python"
+	-command ("import maya.cmds as mc\n\ntimeSlider = mc.currentTime(q=1)\n\nminTime = mc.playbackOptions(q=1, minTime=1)\nmaxTime = mc.playbackOptions(q=1, maxTime=1)\n\nminTime = mc.playbackOptions(minTime=minTime-2)\nmaxTime = mc.playbackOptions(maxTime=maxTime+2)")
+	Frame_TimeSlider_Grow;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Graph Editor.Key Tools"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx "graphEditor"
+	-commandLanguage "python"
+	-command ("if mc.contextInfo(\"latticeKeyDeform1\", exists=1):\n\n\tmc.latticeDeformKeyCtx(\"latticeKeyDeform1\", e=1, latticeColumns=5, latticeRows=5)\n\tmc.setToolTo(\"latticeKeyDeform1\")\n\nelse:\n\tmc.latticeDeformKeyCtx(\"latticeKeyDeform1\", latticeColumns=5, latticeRows=5)\n\tmc.setToolTo(\"latticeKeyDeform1\")")
+	lattice_key_deform_55;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Graph Editor.Select Keys"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx "graphEditor"
+	-commandLanguage "python"
+	-command ("from Keys.graph_editor import keyframe_selections\n\nkeyframe_selections.step_through_keys(direction=\"back\")")
+	Keys_Step_back;
+  
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Locators"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "python"
+	-command ("# Locator as Local Child - Win + l\n\nimport maya.cmds as mc\n\ndef childed_loc():\n    sel = mc.ls(sl=1)\n\n    if sel:\n        for obj in sel:\n\n            # Remove namespace, make loc\n            obj_nn = obj.rpartition(\":\")[2]\n            loc_name = obj_nn + \"_loc\"\n            loc = mc.spaceLocator(n=loc_name)[0]\n\n            # Use selection's rotateOrder\n            ro = mc.getAttr(obj + \".rotateOrder\")\n            mc.setAttr(loc + \".rotateOrder\", ro)\n\n            # Put loc in parent of sel's space and copy attributes\n            parent_node = mc.pickWalk(obj, d=\"up\")\n\n            mc.parent(loc, parent_node, relative=1)\n            mc.copyAttr(obj, loc, values=1)\n\n    else:\n        pass\n\n\nchilded_loc()")
+	Locator_as_local_child;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Graph Editor.Key Tools"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx "graphEditor"
+	-commandLanguage "python"
+	-command ("# Threshold cutoff\n\nimport maya.cmds as mc\nimport math\n\ndef get_curve_direction(anim_curve):\n    values = (mc.keyframe(anim_curve, q=1, selected=1, valueChange=1))\n    start_key_val = values[0]\n    following_sum = sum(values[1:])\n    following_avg = following_sum / len(values[1:])\n\n    if start_key_val >= following_avg:\n        curve_direction = -1\n        peak = 0\n        return curve_direction, peak\n    if start_key_val <= following_avg:\n        curve_direction = 1\n        peak = -1   # -1 means the last item of the sorted values\n        return curve_direction, peak\n\n\ndef main():\n    sel = mc.ls(sl=1)\n    anim_curve = mc.keyframe(sel, q=1, selected=1, name=1)[0]\n    keyframes = mc.keyframe(sel, q=1, selected=1, indexValue=1)\n\n    curv_direction, peak = get_curve_direction(anim_curve)\n\n    values = sorted(mc.keyframe(sel, q=1, selected=1, valueChange=1))\n    peak_val = (values[peak])                  # Get either greatest or lowest value\n    range_val = math.copysign((values[0] - values[-1]), curv_direction)   # Get range between first and last keys\n\n    cut_off_val = peak_val - (range_val / 10)\n\n\n    for i in keyframes:\n        i_val = mc.keyframe(anim_curve, q=1, index=(i, i), valueChange=1)[0]\n        print(i_val)\n\n        if curv_direction == -1:\n            if i_val < cut_off_val:\n                mc.keyframe(anim_curve, e=1, index=(i, i), valueChange=cut_off_val)\n\n        if curv_direction == 1:\n            if i_val > cut_off_val:\n                mc.keyframe(anim_curve, e=1, index=(i, i), valueChange=cut_off_val)\n\n\nmain()")
+	threshold_cutoffer;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "python"
+	-command ("from Keys.graph_editor import key_soft_split\nreload(key_soft_split)")
+	key_soft_split;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Graph Editor"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx "graphEditor"
+	-commandLanguage "python"
+	-command ("# Toggle Only Curves vs Everything Else\nif mc.selectType(q=1, animCurve=True):\n    mc.selectType(animCurve=False, animKeyframe=True, animBreakdown=True, animInTangent=True, animOutTangent=True)\n\nelse:\n    mc.selectType(animCurve=True, animKeyframe=False, animBreakdown=False, animInTangent=False, animOutTangent=False)")
+	toggle_animcurve_curve_sel;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Selection Filter"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "mel"
+	-command ("setObjectPickMask \"All\" 0;\n\ncreateMaskPopup \"objOther\";\nselectType -locator true;\n\n\n//setObjectPickMask \"Curve\" true;")
+	selection_filter_Curves;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Viewport Animation"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "mel"
+	-command ("global proc ackDeleteKey() {    \n\t// get graph outliner \n\tstring $connection = `editor -q -mainListConnection graphEditor1GraphEd`;\n\t\n\t// get selection from outliner\n\tstring $curveSel[] = `expandSelectionConnectionAsArray $connection`;\n\t\n\tint $keyCount = 0;\n\t$keyCount = `keyframe -an keys -q -kc`;\t\t\t\t\t//check for selected curves\n\n\tif ($keyCount == 0) {  \t\t\t\t\t\t\t//no curves selected: delete current key of objects\n\t\ttimeSliderClearKey;\n\t} else {\t\t\t\t\t\t\t\t//curves are selected:  delete selected keys in graph\n\t\tcutKey -animation keys -clear;\n\t};\n};\n\nackDeleteKey()")
+	deleteKey;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Graph Editor.Key Tools"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx "graphEditor"
+	-commandLanguage "python"
+	-command ("import maya.cmds as mc\n\nif mc.contextInfo(\"retimeKey1\", exists=1):\n\tmc.deleteUI(\"retimeKey1\")\n    \nmc.retimeKeyCtx(\"retimeKey1\")\nmc.setToolTo(\"retimeKey1\")\n\n\n\n\n\n")
+	retime_key_tool;
+  
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Viewport Animation"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "python"
+	-command ("def normal_key():\n    sel_channels = mc.channelBox('mainChannelBox', q=1, sma=1) or []\n    mc.setKeyframe(attribute=sel_channels)\n\n\ndef insert_key_on_graph_sel():\n    curve_names = mc.keyframe(q=1, selected=1, name=1)\n    current_time = mc.currentTime(q=1)\n    mc.setKeyframe(curve_names, insert=1, time=current_time, adjustTangent=0)\n\n    mc.selectKey(curve_names, time=(current_time, current_time))\n\n\nif mc.keyframe(q=1, selected=1):\n    insert_key_on_graph_sel()\nelse:\n    normal_key()\n")
+	my_set_key;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Graph Editor.Select Keys"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx "graphEditor"
+	-commandLanguage "python"
+	-command ("# Deselect Current Key\ntime = mc.currentTime(q=1)\n\n#Get GraphEditor Outliner Channel Selection\ngraphEditorObjects = mc.selectionConnection('graphEditor1FromOutliner', q=1, object=1)\n\nmc.selectKey(graphEditorObjects, remove=1, time=(time,))")
+	deselect_current_time_keys;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Viewport Animation"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "python"
+	-command ("min_time = mc.playbackOptions(q=1, minTime=1)\ntime = mc.currentTime(q=1)\n\nmc.play(state=False) # Stop if playing\n\nif time-24 <= min_time:\n    mc.currentTime(min_time)\nelse:\n    mc.currentTime(time-24)\n")
+	set_time_back_24;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Rigging"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "python"
+	-command ("import maya.cmds as mc\n\nsel = mc.ls(sl=1)\nsel_channels = mc.channelBox('mainChannelBox', q=1, sma=1)\n\nchannels_list = ['tx', 'ty', 'tz', 'rx', 'ry', 'rz']\nskip_rot = []\nskip_tran = []\n\n\n\nif sel_channels:\n    for channel in channels_list:\n        if channel not in sel_channels:\n            if channel[0] == 't':\n                skip_tran.append(channel[1])\n            if channel[0] == 'r':\n                skip_rot.append(channel[1])\n\npCon = mc.parentConstraint(sel[0], sel[1], skipRotate=skip_rot, skipTranslate=skip_tran, mo=1)")
+	Parent_Constrain_With_Offset;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Locators"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "python"
+	-command ("from Light_Tools import locator_creations\n\nsel = mc.ls(sl=1)\nlocator_creations.simple_loc(sel)")
+	Create_Locator;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Viewport Animation"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "python"
+	-command ("# Set Insert Keys in frame range\n\nsel = mc.ls(sl=1)\n\naTimeSlider = mel.eval('$tmpVar=$gPlayBackSlider')\ntimeRange = mc.timeControl(aTimeSlider, q=True, rangeArray=True)\nstart, end = timeRange[0], timeRange[1]\n\nfor i in range(int(start), int(end)):\n    mc.setKeyframe(sel, time=(i, i), insert=1)")
+	set_keys_in_range;
+  
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Graph Editor.Key Tools"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx "graphEditor"
+	-commandLanguage "python"
+	-command ("import maya.cmds as mc\n\nsel = mc.ls(sl=1)\n\nmc.filterCurve(sel)")
+	euler_filter;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Viewport Animation.ChannelBox"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "python"
+	-command ("import maya.cmds as mc\n\nsel = mc.ls(sl=1)\n\nappendix = ['.tx', '.ty', '.tz']\nnewSel = []\n\nchannels = mc.channelBox('mainChannelBox', q=1, sma=1)\n        \nif (channels is None) or (all(elem not in channels  for elem in ['tx', 'tz', 'ty'])):\n    for ctrl in sel:\n  \n        for each in appendix:\n        \n            newSel.append(ctrl + each)\n           \n    mc.channelBox('mainChannelBox', edit=1, select=newSel)\n    \nelif len(channels) == 3:\n    for ctrl in sel:\n        mc.channelBox('mainChannelBox', edit=1, select=ctrl + '.tx')\n        \nelif 'tx' in channels:    \n    for ctrl in sel:\n        mc.channelBox('mainChannelBox', edit=1, select=ctrl + '.ty')\n        \nelif 'ty' in channels:    \n    for ctrl in sel:\n        mc.channelBox('mainChannelBox', edit=1, select=ctrl + '.tz')\n        \nelif 'tz' in channels:\n        for ctrl in sel:\n    \n            for each in appendix:\n        \n                newSel.append(ctrl + each)\n            \n        mc.channelBox('mainChannelBox', edit=1, select=newSel)")
+	Select_Translates;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Panels"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "python"
+	-command ("import maya.cmds as mc\nimport maya.mel as mel\n\nall_panels = mc.getPanel(vis=1)\n\ngraph_editors = [pan for pan in all_panels if \"graphEditor\" in pan]\n\nif graph_editors:\n    mc.deleteUI(graph_editors, panel=1)\n    \nelse:\n    mel.eval(\"GraphEditor;\")\n\n")
+	graphEditor;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Graph Editor.Select Keys"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx "graphEditor"
+	-commandLanguage "python"
+	-command ("from Keys.graph_editor import keyframe_selections\n\nkeyframe_selections.step_through_keys(direction=\"forward\")")
+	Keys_step_forward;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "python"
+	-command ("import pymel.core as pm\n\ncurrent_sel = pm.ls(sl=1)[0]\nfoot_name = current_sel.split(\"Leg\")[0]\nfoot_ctrls_list = []\n\nfront_stripped_names = [u'ToeAFkSimpleDigitA', u'ToeBFkSimpleDigitB', u'ToeAFkSimpleDigitB',\n                     u'ToeCFkSimpleMetaCarpal', u'ToeCFkSimpleDigitA', u'ToeDFkSimpleMetaCarpal',\n                     u'ToeBFkSimpleDigitC', u'LegIkBallOfFoot', u'LegIkToes',\n                     u'ToeCFkSimpleDigitB', u'LegIkOuterFoot', u'ToeAFkSimpleDigitC',\n                     u'ToeDFkSimpleDigitC', u'ToeBFkSimpleDigitA', u'LegIkHeel',\n                     u'ToeDFkSimpleDigitA', u'ToeBFkSimpleMetaCarpal', u'ToeDFkSimpleDigitB',\n                     u'LegIkAnkle', u'ToeCFkSimpleDigitC', u'LegIkInnerFoot',\n                     u'ToeAFkSimpleMetaCarpal', u'LegIkEndOfToe', u'LegIkFoot',\n                     u'LegIkIkPoleVector']\n\nback_stripped_names = [u'ToeCFkSimpleDigitC', u'ToeBFkSimpleMetaCarpal', u'LegIkAnkle',\n                     u'ToeCFkSimpleDigitA', u'LegIkFoot', u'ToeBFkSimpleDigitB',\n                     u'ToeCFkSimpleDigitB', u'ToeBFkSimpleDigitC', u'LegIkBallOfFoot', u'LegIkEndOfToe',\n                     u'ToeAFkSimpleDigitC', u'LegIkInnerFoot', u'ToeAFkSimpleDigitA',\n                     u'ToeBFkSimpleDigitA', u'LegIkOuterFoot', u'ToeAFkSimpleDigitB',\n                     u'LegIkHeel', u'LegIkToes', u'ToeAFkSimpleMetaCarpal',\n                     u'ToeCFkSimpleMetaCarpal', u'LegIkPoleVector']\n\n\nif \"front\" in foot_name:\n    source_list = front_stripped_names\nelif \"back\" in foot_name:\n    source_list = back_stripped_names\n\nfor name in source_list:\n    a_foot_ctrl = foot_name + name\n    foot_ctrls_list.append(a_foot_ctrl)\n\nmc.select(foot_ctrls_list)")
+	select_feet_stuffs;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Graph Editor.Key Tools"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx "graphEditor"
+	-commandLanguage "python"
+	-command ("import maya.cmds as mc\nimport pymel.core as pm\n\nsel = mc.ls(sl=1)[0]\ncurve_name = mc.keyframe(sel, q=1, n=1, sl=1)\n\nkeys = mc.keyframe(curve_name, q=1, sl=1, indexValue=1)  # Get index\nkeyTimes = cmds.keyframe(curve_name, q=True, index=(keys[0], keys[-1]))   # Get time from index\n\n\ntry:\n    cuv\nexcept:\n    cuv = None\n\nif cuv == None:\n   dup_cuv = mc.duplicate(curve_name, name=\"temp_animCurv\")\n   cuv = pm.ls(dup_cuv)[0]\n\n\nfor i, key in enumerate(keys):\n    mc.selectKey(curve_name, index=(keys[i], keys[i]))\n    time_change = keyTimes[i] - 1\n\n    if pm.nodeType(cuv) == 'animCurveTL':\n        val = pm.nodetypes.AnimCurveTL.evaluate(cuv, time_change)\n    elif pm.nodeType(cuv) == 'animCurveTA':\n        val = pm.nodetypes.AnimCurveTA.evaluate(cuv, time_change)\n        val = val * 57.29577951308232     # Need to mutiply by 1 radian for some reason\n    elif pm.nodeType(cuv) == 'animCurveTU':\n        val = pm.nodetypes.AnimCurveTU.evaluate(cuv, time_change)\n\n    mc.keyframe(animation='keys', option='over', absolute=True, timeChange=time_change, valueChange=val)\n\nmc.selectKey(curve_name, index=(keys[0], keys[-1]))")
+	slide_key_left;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Graph Editor.Select Keys"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx "graphEditor"
+	-commandLanguage "python"
+	-command ("import maya.cmds as mc\n\nmc.selectKey(cl=1)\nmc.selectKey()")
+	Select_AnimCurves;
+  
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Graph Editor.Select Keys"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx "graphEditor"
+	-commandLanguage "python"
+	-command ("from Keys.graph_editor import key_arc_select\n\nkey_arc_select.main(sign=\"negative\")")
+	key_arc_select_neg;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Rigging"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "python"
+	-command ("# Select Constrained Object from Driver\n\nsel = mc.ls(sl=1)\n# Find connected constraint\nconstraints = list(set(mc.listConnections(sel, type=\"constraint\")))\n\nmc.select(clear=1)\n\nfor con in constraints:\n    connections = []\n    \n    transforms = mc.listConnections(con, scn=1, type=\"transform\", exactType=1, d=0) or []\n    joints = mc.listConnections(con, scn=1, type=\"joint\", exactType=1, d=0) or []\n    if transforms: connections.extend(transforms)\n    if joints: connections.extend(joints)\n    \n    for obj in connections:\n        if obj not in sel:\n            mc.select(obj, add=1)")
+	Select_Constrained_Connection;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Graph Editor.Select Keys"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx "graphEditor"
+	-commandLanguage "python"
+	-command ("import maya.cmds as mc\n\ngraphEditorObjects = mc.selectionConnection('graphEditor1FromOutliner', q=1, object=1)\n\ntry:\n    currentKey = int(mc.keyframe(q=1, sl=1)[0])\n    lastKey = mc.findKeyframe(animation=\"keys\", which=\"last\")\n\nexcept:\n    currentKey = mc.currentTime(q=1)\n    lastKey = mc.findKeyframe(animation=\"keysOrObjects\", which=\"last\")\n\n\nmc.selectKey(clear=1)\nfor curv in graphEditorObjects:\n    mc.selectKey(curv, add=1, k=1, time=(currentKey, lastKey))\n\n")
+	here_and_after_keys;
+
+runTimeCommand
+	-label ""
+	-annotation ""
+	-longAnnotation ""
+	-category "Custom Scripts.Graph Editor.Select Keys"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx "graphEditor"
+	-commandLanguage "python"
+	-command ("import maya.cmds as mc\n\nmc.selectKey(clear=1)")
+	clearGraphKeySelect;
+  
+//
+// The name commands referenced by the hotkeys
+//
+nameCommand
+	-annotation "graphEditorNameCommand"
+	-sourceType "mel"
+	-command ("graphEditor")
+	graphEditorNameCommand;
+
+nameCommand
+	-annotation "deleteKeyNameCommand"
+	-sourceType "mel"
+	-command ("deleteKey")
+	deleteKeyNameCommand;
+
+nameCommand
+	-annotation "SelectRigNameCommand"
+	-sourceType "mel"
+	-command ("SelectRig")
+	SelectRigNameCommand;
+
+nameCommand
+	-annotation "Clear Channel Box Selection - Clear channel selection in Channel Box so curves from Timeline are no longer filtered."
+	-sourceType "mel"
+	-command ("python(\"from animBot._api.core import CORE as ANIMBOT_CORE; ANIMBOT_CORE.trigger.channelBoxExtraTools_clearChannelBoxSelection();\");")
+	animBot_channelBoxExtraTools_clearChannelBoxSelection;
+
+nameCommand
+	-annotation "Blend to Neighbors: 100% - That's probably the old aTools signature. Blend your current pose to the neighbor poses."
+	-sourceType "mel"
+	-command ("python(\"from animBot._api.core import CORE as ANIMBOT_CORE; ANIMBOT_CORE.trigger.tweenSlider_blendToNeighbors_100();\");")
+	animBot_tweenSlider_blendToNeighbors_100;
+
+nameCommand
+	-annotation "Blend to Neighbors: -100% - That's probably the old aTools signature. Blend your current pose to the neighbor poses."
+	-sourceType "mel"
+	-command ("python(\"from animBot._api.core import CORE as ANIMBOT_CORE; ANIMBOT_CORE.trigger.tweenSlider_blendToNeighbors_neg100();\");")
+	animBot_tweenSlider_blendToNeighbors_neg100;
+  
+nameCommand
+	-annotation "Select_TranslatesNameCommand"
+	-sourceType "mel"
+	-command ("Select_Translates")
+	Select_TranslatesNameCommand;
+
+nameCommand
+	-annotation "Select_RotatesNameCommand"
+	-sourceType "mel"
+	-command ("Select_Rotates")
+	Select_RotatesNameCommand;
+
+nameCommand
+	-annotation "selection_filter_AllNameCommand"
+	-sourceType "mel"
+	-command ("selection_filter_All")
+	selection_filter_AllNameCommand;
+
+nameCommand
+	-annotation "selection_filter_CurvesNameCommand"
+	-sourceType "mel"
+	-command ("selection_filter_Curves")
+	selection_filter_CurvesNameCommand;
+
+nameCommand
+	-annotation "euler_filterNameCommand"
+	-sourceType "mel"
+	-command ("euler_filter")
+	euler_filterNameCommand;
+
+nameCommand
+	-annotation "Global Offset - Changes will propagate to the whole animation."
+	-sourceType "mel"
+	-command ("python(\"from animBot._api.core import CORE as ANIMBOT_CORE; ANIMBOT_CORE.trigger.globalOffset_globalOffset();\");")
+	animBot_globalOffset_globalOffset;
+
+nameCommand
+	-annotation "Frame_TimeSlider_GrowNameCommand"
+	-sourceType "mel"
+	-command ("Frame_TimeSlider_Grow")
+	Frame_TimeSlider_GrowNameCommand;
+
+nameCommand
+	-annotation "Frame_Time_Slider_ShrinkNameCommand"
+	-sourceType "mel"
+	-command ("Frame_Time_Slider_Shrink")
+	Frame_Time_Slider_ShrinkNameCommand;
+
+nameCommand
+	-annotation "ReselectAnimLayerBecauseTheySuckNameCommand"
+	-sourceType "mel"
+	-command ("ReselectAnimLayerBecauseTheySuck")
+	ReselectAnimLayerBecauseTheySuckNameCommand;
+
+nameCommand
+	-annotation "SelectObjectsOnLayerNameCommand"
+	-sourceType "mel"
+	-command ("SelectObjectsOnLayer")
+	SelectObjectsOnLayerNameCommand;
+
+nameCommand
+	-annotation "PlaybackToggleNameCommand"
+	-sourceType "mel"
+	-command ("PlaybackToggle")
+	PlaybackToggleNameCommand;
+
+nameCommand
+	-annotation "GoToMinFrameNameCommand"
+	-sourceType "mel"
+	-command ("GoToMinFrame")
+	GoToMinFrameNameCommand;
+
+nameCommand
+	-annotation "PlayblastWindowNameCommand"
+	-sourceType "mel"
+	-command ("PlayblastWindow")
+	PlayblastWindowNameCommand;
+
+nameCommand
+	-annotation "PlayblastOptionsNameCommand"
+	-sourceType "mel"
+	-command ("PlayblastOptions")
+	PlayblastOptionsNameCommand;
+
+nameCommand
+	-annotation "Select_AnimCurvesNameCommand"
+	-sourceType "mel"
+	-command ("Select_AnimCurves")
+	Select_AnimCurvesNameCommand;
+
+nameCommand
+	-annotation "Isolate_animCurveNameCommand"
+	-sourceType "mel"
+	-command ("Isolate_animCurve")
+	Isolate_animCurveNameCommand;
+
+nameCommand
+	-annotation "Smart Snap Keys - Snap keys in a non-destructive manner."
+	-sourceType "mel"
+	-command ("python(\"from animBot._api.core import CORE as ANIMBOT_CORE; ANIMBOT_CORE.trigger.animCurveExtraTools_smartSnapKeys();\");")
+	animBot_animCurveExtraTools_smartSnapKeys;
+  
+nameCommand
+	-annotation "WS_LocatorNameCommand"
+	-sourceType "mel"
+	-command ("Create_Locator_As_Ctrlr")
+	WS_LocatorNameCommand;
+
+nameCommand
+	-annotation "Simplify Bake Keys: -5% - Simplify (remove keys) or bake (add keys) your animation curve."
+	-sourceType "mel"
+	-command ("python(\"from animBot._api.core import CORE as ANIMBOT_CORE; ANIMBOT_CORE.trigger.keySlider_simplifyBakeKeys_neg5();\");")
+	animBot_keySlider_simplifyBakeKeys_neg5;
+
+nameCommand
+	-annotation "Create_Constrained_LocatorNameCommand"
+	-sourceType "mel"
+	-command ("Create_Locator_Constrained")
+	Create_Constrained_LocatorNameCommand;
+
+nameCommand
+	-annotation "my_simple_bakeNameCommand"
+	-sourceType "mel"
+	-command ("my_simple_bake")
+	my_simple_bakeNameCommand;
+
+nameCommand
+	-annotation "Create_LocatorNameCommand"
+	-sourceType "mel"
+	-command ("Create_Locator")
+	Create_LocatorNameCommand;
+
+nameCommand
+	-annotation "Parent_Constrain_no_offsetNameCommand"
+	-sourceType "mel"
+	-command ("Parent_Constrain_no_offset")
+	Parent_Constrain_no_offsetNameCommand;
+
+nameCommand
+	-annotation "Parent_Constrain_With_OffsetNameCommand"
+	-sourceType "mel"
+	-command ("Parent_Constrain_With_Offset")
+	Parent_Constrain_With_OffsetNameCommand;
+
+nameCommand
+	-annotation "Delete_ConstraintNameCommand"
+	-sourceType "mel"
+	-command ("Delete_Constraint")
+	Delete_ConstraintNameCommand;
+
+nameCommand
+	-annotation "Locators_On_Off"
+	-sourceType "mel"
+	-command ("locators_toggle_command")
+	Locators_On_OffNameCommand;
+
+nameCommand
+	-annotation "Screen Z Manipulation"
+	-sourceType "mel"
+	-command ("python(\"screenZManipulator.screenZManipulator(fromWhere='hotKey')\")")
+	screenZManipulatorNameCommand;
+
+nameCommand
+	-annotation "here_and_after_keysNameCommand"
+	-sourceType "mel"
+	-command ("here_and_after_keys")
+	here_and_after_keysNameCommand;
+
+nameCommand
+	-annotation "clearGraphKeySelectNameCommand"
+	-sourceType "mel"
+	-command ("clearGraphKeySelect")
+	clearGraphKeySelectNameCommand;
+
+nameCommand
+	-annotation "animCurveSnapNameCommand"
+	-sourceType "mel"
+	-command ("animCurveSnap")
+	animCurveSnapNameCommand;
+
+nameCommand
+	-annotation "Select_Active_animCurveNameCommand"
+	-sourceType "mel"
+	-command ("Select_Active_animCurve")
+	Select_Active_animCurveNameCommand;
+
+nameCommand
+	-annotation "panel_transform_graphNameCommand"
+	-sourceType "mel"
+	-command ("panel_transform_graph")
+	panel_transform_graphNameCommand;
+
+nameCommand
+	-annotation "panel_tranform_modelPNameCommand"
+	-sourceType "mel"
+	-command ("panel_tranform_modelP")
+	panel_tranform_modelPNameCommand;
+
+nameCommand
+	-annotation "Sliders Pop Up - A convenient pop up window to use animBot Sliders on the spot."
+	-sourceType "mel"
+	-command ("python(\"from animBot._api.core import CORE as ANIMBOT_CORE; ANIMBOT_CORE.trigger.globalTools_slidersPopUp();\");")
+	animBot_globalTools_slidersPopUp;
+
+nameCommand
+	-annotation "Mirror to Left - Mirror a pose exclusively to the left side rig controls."
+	-sourceType "mel"
+	-command ("python(\"from animBot._api.core import CORE as ANIMBOT_CORE; ANIMBOT_CORE.trigger.mirror_mirrorToLeft();\");")
+	animBot_mirror_mirrorToLeft;
+
+nameCommand
+	-annotation "pause_viewportNameCommand"
+	-sourceType "mel"
+	-command ("pause_viewport")
+	pause_viewportNameCommand;
+
+nameCommand
+	-annotation "unPause_viewportNameCommand"
+	-sourceType "mel"
+	-command ("unPause_viewport")
+	unPause_viewportNameCommand;
+
+nameCommand
+	-annotation "MoveNearestPickedKeyToolActivateNameCommand"
+	-sourceType "mel"
+	-command ("MoveNearestPickedKeyToolActivate")
+	MoveNearestPickedKeyToolActivateNameCommand;
+
+nameCommand
+	-annotation "AddKeyToolActivateNameCommand"
+	-sourceType "mel"
+	-command ("AddKeyToolActivate")
+	AddKeyToolActivateNameCommand;
+
+nameCommand
+	-annotation "InsertKeyToolActivateNameCommand"
+	-sourceType "mel"
+	-command ("InsertKeyToolActivate")
+	InsertKeyToolActivateNameCommand;
+
+nameCommand
+	-annotation "Locator_as_Local_ControllerNameCommand"
+	-sourceType "mel"
+	-command ("Locator_as_Local_Controller")
+	Locator_as_Local_ControllerNameCommand;
+
+nameCommand
+	-annotation "Locator_as_local_childNameCommand"
+	-sourceType "mel"
+	-command ("Locator_as_local_child")
+	Locator_as_local_childNameCommand;
+
+nameCommand
+	-annotation "RegionKeysToolNameCommand"
+	-sourceType "mel"
+	-command ("RegionKeysTool")
+	RegionKeysToolNameCommand;
+
+nameCommand
+	-annotation "TimeDraggerToolActivateNameCommand"
+	-sourceType "mel"
+	-command ("TimeDraggerToolActivate")
+	TimeDraggerToolActivateNameCommand;
+
+nameCommand
+	-annotation "TimeDraggerToolDeactivateNameCommand"
+	-sourceType "mel"
+	-command ("TimeDraggerToolDeactivate")
+	TimeDraggerToolDeactivateNameCommand;
+
+nameCommand
+	-annotation "slide_key_leftNameCommand"
+	-sourceType "mel"
+	-command ("slide_key_left")
+	slide_key_leftNameCommand;
+
+nameCommand
+	-annotation "delete_slider_cuvNameCommand"
+	-sourceType "mel"
+	-command ("delete_slider_cuv")
+	delete_slider_cuvNameCommand;
+
+nameCommand
+	-annotation "PinSelectionNameCommand"
+	-sourceType "mel"
+	-command ("PinSelection")
+	PinSelectionNameCommand;
+
+nameCommand
+	-annotation "simplify_keysNameCommand"
+	-sourceType "mel"
+	-command ("simplify_keys")
+	simplify_keysNameCommand;
+
+nameCommand
+	-annotation "toggle_loc_visNameCommand"
+	-sourceType "mel"
+	-command ("toggle_loc_vis")
+	toggle_loc_visNameCommand;
+  
+nameCommand
+	-annotation "del_keys_from_channelbox_ALLNameCommand"
+	-sourceType "mel"
+	-command ("del_keys_from_channelbox_ALL")
+	del_keys_from_channelbox_ALLNameCommand;
+
+nameCommand
+	-annotation "zero_sel_channelsNameCommand"
+	-sourceType "mel"
+	-command ("zero_sel_channels")
+	zero_sel_channelsNameCommand;
+
+nameCommand
+	-annotation "toggle_animcurve_curve_selNameCommand"
+	-sourceType "mel"
+	-command ("toggle_animcurve_curve_sel")
+	toggle_animcurve_curve_selNameCommand;
+
+nameCommand
+	-annotation "Zero_keys_from_graph_selNameCommand"
+	-sourceType "mel"
+	-command ("Zero_keys_from_graph_sel")
+	Zero_keys_from_graph_selNameCommand;
+
+nameCommand
+	-annotation "Select_Current_Time_KeysNameCommand"
+	-sourceType "mel"
+	-command ("Select_Current_Time_Keys")
+	Select_Current_Time_KeysNameCommand;
+
+nameCommand
+	-annotation "centre_sel_to_camNameCommand"
+	-sourceType "mel"
+	-command ("centre_sel_to_cam")
+	centre_sel_to_camNameCommand;
+
+nameCommand
+	-annotation "Select_Constrained_ConnectionNameCommand"
+	-sourceType "mel"
+	-command ("Select_Constrained_Connection")
+	Select_Constrained_ConnectionNameCommand;
+
+nameCommand
+	-annotation "ak_push_95NameCommand"
+	-sourceType "mel"
+	-command ("down_val_tweaker")
+	ak_push_95NameCommand;
+
+nameCommand
+	-annotation "deselect_current_time_keysNameCommand"
+	-sourceType "mel"
+	-command ("deselect_current_time_keys")
+	deselect_current_time_keysNameCommand;
+
+nameCommand
+	-annotation "Keys_step_forwardNameCommand"
+	-sourceType "mel"
+	-command ("Keys_step_forward")
+	Keys_step_forwardNameCommand;
+
+nameCommand
+	-annotation "Keys_Step_backNameCommand"
+	-sourceType "mel"
+	-command ("Keys_Step_back")
+	Keys_Step_backNameCommand;
+
+nameCommand
+	-annotation "Keys_expand_forwardNameCommand"
+	-sourceType "mel"
+	-command ("Keys_expand_forward")
+	Keys_expand_forwardNameCommand;
+
+nameCommand
+	-annotation "Keys_expand_backNameCommand"
+	-sourceType "mel"
+	-command ("Keys_expand_back")
+	Keys_expand_backNameCommand;
+
+nameCommand
+	-annotation "Keys_subtract_backNameCommand"
+	-sourceType "mel"
+	-command ("Keys_subtract_back")
+	Keys_subtract_backNameCommand;
+
+nameCommand
+	-annotation "Keys_subtract_forwardNameCommand"
+	-sourceType "mel"
+	-command ("Keys_subtract_forward")
+	Keys_subtract_forwardNameCommand;
+
+nameCommand
+	-annotation "TangentsAutoNameCommand"
+	-sourceType "mel"
+	-command ("TangentsAuto")
+	TangentsAutoNameCommand;
+
+nameCommand
+	-annotation "Select_All_TransformsNameCommand"
+	-sourceType "mel"
+	-command ("Select_All_Transforms")
+	Select_All_TransformsNameCommand;
+  
+nameCommand
+	-annotation "Move_key_pos1NameCommand"
+	-sourceType "mel"
+	-command ("Move_key_pos1")
+	Move_key_pos1NameCommand;
+
+nameCommand
+	-annotation "Move_key_neg1NameCommand"
+	-sourceType "mel"
+	-command ("Move_key_neg1")
+	Move_key_neg1NameCommand;
+
+nameCommand
+	-annotation "NextKeyNameCommand"
+	-sourceType "mel"
+	-command ("NextKey")
+	NextKeyNameCommand;
+
+nameCommand
+	-annotation "NextFrameNameCommand"
+	-sourceType "mel"
+	-command ("NextFrame")
+	NextFrameNameCommand;
+
+nameCommand
+	-annotation "PreviousKeyNameCommand"
+	-sourceType "mel"
+	-command ("PreviousKey")
+	PreviousKeyNameCommand;
+
+nameCommand
+	-annotation "PreviousFrameNameCommand"
+	-sourceType "mel"
+	-command ("PreviousFrame")
+	PreviousFrameNameCommand;
+
+nameCommand
+	-annotation "previous_frameNameCommand"
+	-sourceType "mel"
+	-command ("previous_frame")
+	previous_frameNameCommand;
+
+nameCommand
+	-annotation "next_frameNameCommand"
+	-sourceType "mel"
+	-command ("next_frame")
+	next_frameNameCommand;
+
+nameCommand
+	-annotation "previous_keyNameCommand"
+	-sourceType "mel"
+	-command ("previous_key")
+	previous_keyNameCommand;
+
+nameCommand
+	-annotation "next_keyNameCommand"
+	-sourceType "mel"
+	-command ("next_key")
+	next_keyNameCommand;
+
+nameCommand
+	-annotation "UndoNameCommand"
+	-sourceType "mel"
+	-command ("Undo")
+	UndoNameCommand;
+
+nameCommand
+	-annotation "slide_key_rightNameCommand"
+	-sourceType "mel"
+	-command ("slide_key_right")
+	slide_key_rightNameCommand;
+
+nameCommand
+	-annotation "refresh_channel_selectionNameCommand"
+	-sourceType "mel"
+	-command ("refresh_channel_selection")
+	refresh_channel_selectionNameCommand;
+
+nameCommand
+	-annotation "set_time_back_24NameCommand"
+	-sourceType "mel"
+	-command ("set_time_back_24")
+	set_time_back_24NameCommand;
+
+nameCommand
+	-annotation "set_time_to_closest_selNameCommand"
+	-sourceType "mel"
+	-command ("set_time_to_closest_sel")
+	set_time_to_closest_selNameCommand;
+
+nameCommand
+	-annotation "Select_non_trans_channelsNameCommand"
+	-sourceType "mel"
+	-command ("Select_non_trans_channels")
+	Select_non_trans_channelsNameCommand;
+  
+nameCommand
+	-annotation "Negative_Share_keysNameCommand"
+	-sourceType "mel"
+	-command ("Negative_Share_keys")
+	Negative_Share_keysNameCommand;
+
+nameCommand
+	-annotation "set_keys_in_rangeNameCommand"
+	-sourceType "mel"
+	-command ("set_keys_in_range")
+	set_keys_in_rangeNameCommand;
+
+nameCommand
+	-annotation "key_soft_splitNameCommand"
+	-sourceType "mel"
+	-command ("key_soft_split")
+	key_soft_splitNameCommand;
+
+nameCommand
+	-annotation "TangentAutoNameCommand"
+	-sourceType "mel"
+	-command ("TangentAuto")
+	TangentAutoNameCommand;
+
+nameCommand
+	-annotation "TangentLinearNameCommand"
+	-sourceType "mel"
+	-command ("TangentLinear")
+	TangentLinearNameCommand;
+
+nameCommand
+	-annotation "select_feet_stuffsNameCommand"
+	-sourceType "mel"
+	-command ("select_feet_stuffs")
+	select_feet_stuffsNameCommand;
+
+nameCommand
+	-annotation "my_set_keyNameCommand"
+	-sourceType "mel"
+	-command ("my_set_key")
+	my_set_keyNameCommand;
+
+nameCommand
+	-annotation "channel_binary_toggleNameCommand"
+	-sourceType "mel"
+	-command ("channel_binary_toggle")
+	channel_binary_toggleNameCommand;
+
+nameCommand
+	-annotation "lattice_key_deform_33NameCommand"
+	-sourceType "mel"
+	-command ("lattice_key_deform_33")
+	lattice_key_deform_33NameCommand;
+
+nameCommand
+	-annotation "lattice_key_deform_55NameCommand"
+	-sourceType "mel"
+	-command ("lattice_key_deform_55")
+	lattice_key_deform_55NameCommand;
+
+nameCommand
+	-annotation "retime_keys_from_selNameCommand"
+	-sourceType "mel"
+	-command ("retime_keys_from_sel")
+	retime_keys_from_selNameCommand;
+
+nameCommand
+	-annotation "retime_key_toolNameCommand"
+	-sourceType "mel"
+	-command ("retime_key_tool")
+	retime_key_toolNameCommand;
+
+nameCommand
+	-annotation "key_arc_selectNameCommand"
+	-sourceType "mel"
+	-command ("key_arc_select_pos")
+	key_arc_selectNameCommand;
+
+nameCommand
+	-annotation "key_arc_select_negNameCommand"
+	-sourceType "mel"
+	-command ("key_arc_select_neg")
+	key_arc_select_negNameCommand;
+
+nameCommand
+	-annotation "Locator_as_controller_in_sel_spaceNameCommand"
+	-sourceType "mel"
+	-command ("Locator_as_controller_in_sel_space")
+	Locator_as_controller_in_sel_spaceNameCommand;
+
+nameCommand
+	-annotation "Smooth Rough: -50% - Soften your animation curve or make it harsh."
+	-sourceType "mel"
+	-command ("python(\"from animBot._api.core import CORE as ANIMBOT_CORE; ANIMBOT_CORE.trigger.keySlider_smoothRough_neg50();\");")
+	animBot_keySlider_smoothRough_neg50;
+
+nameCommand
+	-annotation "threshold_cutofferNameCommand"
+	-sourceType "mel"
+	-command ("threshold_cutoffer")
+	threshold_cutofferNameCommand;
+  
+//
+// The user hotkeys
+//
+//
+// The hotkey set
+//
+hotkeySet -source "Maya_Default" -current J_Keys_23_a;
+//
+// The hotkey contexts and hotkeys
+//
+hotkey -keyShortcut "g" -alt -name ("");
+hotkey -keyShortcut "z" -ctl -sht -name ("");
+hotkey -keyShortcut "c" -alt -name ("GoToMinFrameNameCommand");
+hotkey -keyShortcut "v" -alt -sht -name ("");
+hotkey -keyShortcut ";" -name ("Create_LocatorNameCommand");
+hotkey -keyShortcut "r" -sht -releaseName ("TimeDraggerToolDeactivateNameCommand");
+hotkey -keyShortcut "g" -alt -sht -name ("graphEditorNameCommand");
+hotkey -keyShortcut "w" -ctl -sht -releaseName ("pause_viewportNameCommand");
+hotkey -keyShortcut "r" -sht -name ("TimeDraggerToolActivateNameCommand");
+hotkey -keyShortcut "w" -ctl -sht -name ("unPause_viewportNameCommand");
+hotkey -keyShortcut "l" -ctl -alt -sht -name ("Locator_as_controller_in_sel_spaceNameCommand");
+hotkey -keyShortcut "@" -alt -name ("select_feet_stuffsNameCommand");
+hotkey -keyShortcut "o" -alt -sht -name ("");
+hotkey -keyShortcut "." -releaseName ("");
+hotkey -keyShortcut "." -name ("NextKeyNameCommand");
+hotkey -keyShortcut "w" -ctl -releaseName ("");
+hotkey -keyShortcut "w" -ctl -name ("");
+hotkey -keyShortcut "k" -ctl -name ("Delete_ConstraintNameCommand");
+hotkey -keyShortcut "t" -name ("TangentsAutoNameCommand");
+hotkey -keyShortcut "b" -sht -releaseName ("");
+hotkey -keyShortcut "t" -releaseName ("");
+hotkey -keyShortcut "k" -name ("");
+hotkey -keyShortcut "5" -ctl -name ("key_soft_splitNameCommand");
+hotkey -keyShortcut "i" -name ("");
+hotkey -keyShortcut "b" -sht -name ("animBot_keySlider_simplifyBakeKeys_neg5");
+hotkey -keyShortcut "k" -releaseName ("");
+hotkey -keyShortcut "i" -releaseName ("");
+hotkey -keyShortcut "t" -ctl -name ("Frame_TimeSlider_GrowNameCommand");
+hotkey -keyShortcut "2" -alt -name ("");
+hotkey -keyShortcut "9" -alt -releaseName ("");
+hotkey -keyShortcut "," -releaseName ("");
+hotkey -keyShortcut "9" -alt -name ("animBot_mirror_mirrorToLeft");
+hotkey -keyShortcut "," -name ("PreviousKeyNameCommand");
+hotkey -keyShortcut "v" -ctl -sht -name ("set_time_back_24NameCommand");
+hotkey -keyShortcut "f" -sht -name ("SelectRigNameCommand");
+hotkey -keyShortcut "k" -ctl -sht -name ("Parent_Constrain_no_offsetNameCommand");
+hotkey -keyShortcut "!" -name ("ReselectAnimLayerBecauseTheySuckNameCommand");
+hotkey -keyShortcut "[" -name ("");
+hotkey -keyShortcut "l" -name ("Locators_On_OffNameCommand");
+hotkey -keyShortcut "c" -releaseName ("");
+hotkey -keyShortcut "b" -ctl -name ("my_simple_bakeNameCommand");
+hotkey -keyShortcut "v" -releaseName ("");
+hotkey -keyShortcut "c" -name ("");
+hotkey -keyShortcut "t" -ctl -alt -name ("Frame_Time_Slider_ShrinkNameCommand");
+hotkey -keyShortcut "v" -name ("PlaybackToggleNameCommand");
+hotkey -keyShortcut "c" -sht -releaseName ("");
+hotkey -keyShortcut "`" -releaseName ("");
+hotkey -keyShortcut "c" -sht -name ("animBot_tweenSlider_blendToNeighbors_neg100");
+hotkey -keyShortcut "`" -name ("animBot_globalOffset_globalOffset");
+hotkey -keyShortcut "7" -ctl -name ("");
+hotkey -keyShortcut "l" -cmd -sht -name ("Locator_as_Local_ControllerNameCommand");
+hotkey -keyShortcut "e" -cmd -releaseName ("");
+hotkey -keyShortcut "s" -ctl -alt -sht -name ("set_keys_in_rangeNameCommand");
+hotkey -keyShortcut "s" -name ("my_set_keyNameCommand");
+hotkey -keyShortcut "e" -cmd -name ("InsertKeyToolActivateNameCommand");
+hotkey -keyShortcut "s" -releaseName ("");
+hotkey -keyShortcut "." -alt -releaseName ("");
+hotkey -keyShortcut "@" -name ("SelectObjectsOnLayerNameCommand");
+hotkey -keyShortcut "." -alt -name ("NextFrameNameCommand");
+hotkey -keyShortcut "1" -ctl -name ("screenZManipulatorNameCommand");
+hotkey -keyShortcut "q" -cmd -name ("AddKeyToolActivateNameCommand");
+hotkey -keyShortcut "k" -alt -name ("Select_Constrained_ConnectionNameCommand");
+hotkey -keyShortcut "i" -alt -name ("");
+hotkey -keyShortcut "q" -alt -name ("deleteKeyNameCommand");
+hotkey -keyShortcut "]" -name ("");
+hotkey -keyShortcut "q" -alt -releaseName ("");
+hotkey -keyShortcut "w" -cmd -name ("MoveNearestPickedKeyToolActivateNameCommand");
+hotkey -keyShortcut "e" -sht -name ("Select_RotatesNameCommand");
+hotkey -keyShortcut "\\" -releaseName ("TogglePanZoomReleaseNameCommand");
+hotkey -keyShortcut "l" -ctl -sht -name ("WS_LocatorNameCommand");
+hotkey -keyShortcut "\\" -name ("TogglePanZoomPressNameCommand");
+hotkey -keyShortcut "w" -sht -name ("Select_TranslatesNameCommand");
+hotkey -keyShortcut "q" -alt -sht -name ("del_keys_from_channelbox_ALLNameCommand");
+hotkey -keyShortcut "8" -ctl -name ("");
+hotkey -keyShortcut "f" -alt -sht -releaseName ("");
+hotkey -keyShortcut "," -alt -releaseName ("");
+hotkey -keyShortcut "w" -ctl -alt -sht -name ("channel_binary_toggleNameCommand");
+hotkey -keyShortcut "f" -alt -sht -name ("toggle_loc_visNameCommand");
+hotkey -keyShortcut "," -alt -name ("PreviousFrameNameCommand");
+hotkey -keyShortcut "Ins" -name ("PlayblastWindowNameCommand");
+hotkey -keyShortcut "z" -name ("UndoNameCommand");
+hotkey -keyShortcut "a" -ctl -alt -name ("");
+hotkey -keyShortcut "y" -sht -releaseName ("");
+hotkey -keyShortcut "1" -name ("");
+hotkey -keyShortcut "y" -sht -name ("animBot_channelBoxExtraTools_clearChannelBoxSelection");
+hotkey -keyShortcut "#" -releaseName ("");
+hotkey -keyShortcut "x" -alt -sht -name ("");
+hotkey -keyShortcut "#" -name ("");
+hotkey -keyShortcut "c" -alt -sht -name ("");
+hotkey -keyShortcut "v" -alt -name ("");
+hotkey -keyShortcut "w" -alt -sht -name ("zero_sel_channelsNameCommand");
+hotkey -keyShortcut "l" -cmd -name ("Locator_as_local_childNameCommand");
+hotkey -keyShortcut "Home" -name ("PlayblastOptionsNameCommand");
+hotkey -keyShortcut "$" -name ("selection_filter_CurvesNameCommand");
+hotkey -keyShortcut "&" -name ("panel_transform_graphNameCommand");
+hotkey -keyShortcut "v" -sht -releaseName ("");
+hotkey -keyShortcut "v" -sht -name ("animBot_tweenSlider_blendToNeighbors_100");
+hotkey -keyShortcut "f" -ctl -alt -name ("");
+hotkey -keyShortcut "g" -sht -name ("refresh_channel_selectionNameCommand");
+hotkey -keyShortcut "g" -sht -releaseName ("");
+hotkey -keyShortcut "s" -ctl -sht -name ("animBot_animCurveExtraTools_smartSnapKeys");
+hotkey -keyShortcut "s" -ctl -sht -releaseName ("");
+hotkey -keyShortcut "s" -alt -name ("animBot_keySlider_smoothRough_neg50");
+hotkey -keyShortcut "k" -sht -name ("Parent_Constrain_With_OffsetNameCommand");
+hotkey -keyShortcut "s" -alt -releaseName ("");
+hotkey -keyShortcut "e" -alt -sht -name ("Select_All_TransformsNameCommand");
+hotkey -keyShortcut "e" -ctl -sht -name ("Select_non_trans_channelsNameCommand");
+hotkey -keyShortcut "u" -cmd -name ("");
+hotkey -keyShortcut "c" -ctl -alt -name ("centre_sel_to_camNameCommand");
+hotkey -keyShortcut "8" -name ("");
+hotkey -keyShortcut "2" -name ("deleteKeyNameCommand");
+hotkey -keyShortcut "2" -releaseName ("");
+hotkey -keyShortcut "l" -ctl -name ("Create_Constrained_LocatorNameCommand");
+hotkey -keyShortcut "^" -name ("panel_tranform_modelPNameCommand");
+hotkey -keyShortcut "9" -releaseName ("");
+hotkey -keyShortcut "9" -name ("animBot_globalTools_slidersPopUp");
+hotkey -keyShortcut "%" -name ("selection_filter_AllNameCommand");
+hotkey -keyShortcut "o" -name ("");
+hotkey -keyShortcut "o" -releaseName ("");
+hotkeyCtx -type "Editor" -addClient "hyperGraphPanel";
+hotkeyCtx -type "Editor" -addClient "nodeEditorPanel";
+hotkeyCtx -type "Editor" -addClient "outlinerPanel";
+hotkeyCtx -type "Editor" -addClient "timeEditorPanel";
+hotkey -keyShortcut "r" -sht -name ("TimeEditorToggleTimeCursorPressNameCommand");
+hotkey -keyShortcut "k" -name ("") -ctxClient "timeEditorPanel";
+hotkeyCtx -type "Editor" -addClient "hyperShadePanel";
+hotkeyCtx -type "Editor" -addClient "polyTexturePlacementPanel";
+hotkey -keyShortcut "p" -name ("PinSelectionNameCommand");
+hotkey -keyShortcut "/" -name ("") -ctxClient "polyTexturePlacementPanel";
+hotkeyCtx -type "Editor" -addClient "profilerPanel";
+hotkeyCtx -type "Editor" -addClient "shapePanel";
+hotkeyCtx -type "Editor" -addClient "posePanel";
+hotkeyCtx -type "Editor" -addClient "graphEditor";
+hotkey -keyShortcut "o" -ctl -name ("") -ctxClient "graphEditor";
+hotkey -keyShortcut "c" -alt -name ("next_keyNameCommand");
+hotkey -keyShortcut "e" -ctl -alt -name ("") -ctxClient "graphEditor";
+hotkey -keyShortcut "e" -name ("RegionKeysToolNameCommand");
+hotkey -keyShortcut "r" -sht -name ("") -ctxClient "graphEditor";
+hotkey -keyShortcut "w" -ctl -sht -name ("") -ctxClient "graphEditor";
+hotkey -keyShortcut "h" -cmd -name ("") -ctxClient "graphEditor";
+hotkey -keyShortcut "a" -name ("Keys_Step_backNameCommand");
+hotkey -keyShortcut "w" -ctl -name ("") -ctxClient "graphEditor";
+hotkey -keyShortcut "a" -sht -name ("Keys_expand_backNameCommand");
+hotkey -keyShortcut "i" -name ("") -ctxClient "graphEditor";
+hotkey -keyShortcut "*" -name ("threshold_cutofferNameCommand");
+hotkey -keyShortcut "t" -ctl -name ("") -ctxClient "graphEditor";
+hotkey -keyShortcut "c" -ctl -alt -sht -name ("animCurveSnapNameCommand");
+hotkey -keyShortcut "q" -sht -name ("") -ctxClient "graphEditor";
+hotkey -keyShortcut "d" -alt -name ("Keys_subtract_forwardNameCommand");
+hotkey -keyShortcut "0" -ctl -alt -name ("") -ctxClient "graphEditor";
+hotkey -keyShortcut "t" -sht -name ("retime_keys_from_selNameCommand");
+hotkey -keyShortcut "f" -sht -name ("Select_Current_Time_KeysNameCommand");
+hotkey -keyShortcut "/" -name ("") -ctxClient "graphEditor";
+hotkey -keyShortcut "-" -ctl -name ("") -ctxClient "graphEditor";
+hotkey -keyShortcut "s" -sht -name ("") -ctxClient "graphEditor";
+hotkey -keyShortcut "a" -ctl -name ("Move_key_neg1NameCommand");
+hotkey -keyShortcut "r" -alt -sht -name ("") -ctxClient "graphEditor";
+hotkey -keyShortcut "c" -name ("next_frameNameCommand");
+hotkey -keyShortcut "w" -ctl -alt -name ("") -ctxClient "graphEditor";
+hotkey -keyShortcut "v" -name ("") -ctxClient "graphEditor";
+hotkey -keyShortcut "c" -sht -name ("") -ctxClient "graphEditor";
+hotkey -keyShortcut "`" -name ("delete_slider_cuvNameCommand");
+hotkey -keyShortcut "x" -name ("previous_frameNameCommand");
+hotkey -keyShortcut "n" -sht -name ("") -ctxClient "graphEditor";
+hotkey -keyShortcut "f" -alt -name ("Select_Active_animCurveNameCommand");
+hotkey -keyShortcut "h" -sht -name ("ak_push_95NameCommand");
+hotkey -keyShortcut "a" -alt -sht -name ("key_arc_select_negNameCommand");
+hotkey -keyShortcut "f" -ctl -name ("Select_AnimCurvesNameCommand");
+hotkey -keyShortcut "w" -alt -name ("clearGraphKeySelectNameCommand");
+hotkey -keyShortcut "x" -sht -name ("") -ctxClient "graphEditor";
+hotkey -keyShortcut "e" -sht -name ("") -ctxClient "graphEditor";
+hotkey -keyShortcut "w" -sht -name ("") -ctxClient "graphEditor";
+hotkey -keyShortcut "n" -name ("") -ctxClient "graphEditor";
+hotkey -keyShortcut "j" -cmd -name ("") -ctxClient "graphEditor";
+hotkey -keyShortcut "4" -name ("slide_key_leftNameCommand");
+hotkey -keyShortcut "f" -alt -sht -name ("deselect_current_time_keysNameCommand");
+hotkey -keyShortcut "t" -alt -sht -name ("retime_key_toolNameCommand");
+hotkey -keyShortcut "f" -ctl -sht -name ("here_and_after_keysNameCommand");
+hotkey -keyShortcut "s" -alt -sht -name ("set_time_to_closest_selNameCommand");
+hotkey -keyShortcut "z" -name ("") -ctxClient "graphEditor";
+hotkey -keyShortcut "r" -ctl -sht -name ("lattice_key_deform_55NameCommand");
+hotkey -keyShortcut "y" -sht -name ("TangentLinearNameCommand");
+hotkey -keyShortcut "1" -name ("GraphEditorAbsoluteViewNameCommand");
+hotkey -keyShortcut "d" -name ("Keys_step_forwardNameCommand");
+hotkey -keyShortcut "e" -alt -name ("euler_filterNameCommand");
+hotkey -keyShortcut "d" -sht -name ("Keys_expand_forwardNameCommand");
+hotkey -keyShortcut "z" -sht -name ("") -ctxClient "graphEditor";
+hotkey -keyShortcut "w" -alt -sht -name ("Zero_keys_from_graph_selNameCommand");
+hotkey -keyShortcut "x" -alt -name ("previous_keyNameCommand");
+hotkey -keyShortcut "r" -name ("") -ctxClient "graphEditor";
+hotkey -keyShortcut "e" -ctl -name ("") -ctxClient "graphEditor";
+hotkey -keyShortcut "r" -ctl -name ("lattice_key_deform_33NameCommand");
+hotkey -keyShortcut "$" -name ("toggle_animcurve_curve_selNameCommand");
+hotkey -keyShortcut "5" -name ("slide_key_rightNameCommand");
+hotkey -keyShortcut "v" -sht -name ("") -ctxClient "graphEditor";
+hotkey -keyShortcut "g" -sht -name ("") -ctxClient "graphEditor";
+hotkey -keyShortcut "t" -ctl -sht -name ("") -ctxClient "graphEditor";
+hotkey -keyShortcut "a" -alt -name ("Keys_subtract_backNameCommand");
+hotkey -keyShortcut "p" -ctl -name ("") -ctxClient "graphEditor";
+hotkey -keyShortcut "d" -ctl -name ("Move_key_pos1NameCommand");
+hotkey -keyShortcut "e" -ctl -sht -name ("") -ctxClient "graphEditor";
+hotkey -keyShortcut "y" -name ("TangentAutoNameCommand");
+hotkey -keyShortcut "^" -name ("simplify_keysNameCommand");
+hotkey -keyShortcut "1" -alt -name ("Isolate_animCurveNameCommand");
+hotkey -keyShortcut "d" -alt -sht -name ("key_arc_selectNameCommand");
+hotkey -keyShortcut "%" -name ("Negative_Share_keysNameCommand");
+hotkey -keyShortcut "o" -name ("") -ctxClient "graphEditor";
+hotkeyCtx -type "Tool" -addClient "texSculptCacheContext";
+hotkeyCtx -type "Tool" -addClient "polyCutUV";
+hotkeyCtx -type "Tool" -addClient "xgmIGBrush";
+hotkeyCtx -type "Tool" -addClient "SymmetrizeUVBrush";
+hotkeyCtx -type "Tool" -addClient "texCutContext";
+hotkeyCtx -type "Tool" -addClient "Unfold3DBrush";
+hotkeyCtx -type "Tool" -addClient "sculptMeshCache";
