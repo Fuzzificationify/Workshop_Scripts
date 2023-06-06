@@ -1,4 +1,5 @@
 # Paste the first object's animation onto a new animation layer of the second
+# Because the script just copies keys it will only work on objs in the same space
 
 import maya.cmds as mc
 
