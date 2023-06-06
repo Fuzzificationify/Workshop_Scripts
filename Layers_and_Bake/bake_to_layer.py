@@ -1,8 +1,6 @@
 # Sometimes when baking a certain frame range Maya will delete the existing out-of-range keys.
 # This script extracts the existing animation first to protect it.
 
-# Because the script just copies keys it will only work on objs in the same space
-
 import maya.cmds as mc
 
 sel = mc.ls(sl=1)
