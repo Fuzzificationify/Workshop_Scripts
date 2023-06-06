@@ -16,6 +16,7 @@ def get_average_rot(rings):
 def get_leading_vec(rings):
     # Get the positions of first and last ctrls; subtract to find vector
     ring_vec = [mc.xform(r, q=1, ws=1, translation=1) for r in rings]
+    print("ring_vec", ring_vec)
     vec = []
     for t1, t3 in zip(ring_vec[0], ring_vec[-1]):
         vecc = (t1 - t3)
@@ -42,12 +43,15 @@ def aim_node(target_pos, aim_vect=[0, 1, 0], up_vect=[0, 1, 0]):
     mc.delete(cubey)
     return rotate_vec
 
-def main():
-    rings = mc.ls(sl=1)
+def transformer(rings):
+    
     avg_rot = get_average_rot(rings)
 
     vec = get_leading_vec(rings)
     rotate_vec = aim_node(vec)
+
+    print("vec:", vec)
+    print("rotate_vec:", rotate_vec)
 
     fix_axis = 1
     mc.xform('pCube1', ws=1, rotation=rotate_vec)
@@ -57,10 +61,20 @@ def main():
     # mc.xform(rings[0], ws=1, rotation=split_rot)
     # mc.xform(rings[1], ws=1, rotation=split_rot)
 
-    mc.setAttr(rings[0] + '.rotateY', split_rot[1])
-    mc.setAttr(rings[1] + '.rotateY', split_rot[1])
+    mc.setAttr(rings[0] + '.rotateX', split_rot[1])
+    mc.setAttr(rings[1] + '.rotateX', split_rot[1])
     mc.setAttr(rings[0] + '.rotateZ', split_rot[2])
     mc.setAttr(rings[1] + '.rotateZ', split_rot[2])
 
-for 
+
+def main():
+    rings = mc.ls(sl=1)
+    
+    minTime = mc.playbackOptions(q=1, minTime=1)
+    maxTime = mc.playbackOptions(q=1, maxTime=1)
+    
+    for frame in range(int(minTime), int(maxTime)):
+        mc.currentTime(frame)
+        transformer(rings)    
+
 main()
