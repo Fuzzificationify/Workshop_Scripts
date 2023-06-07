@@ -4,7 +4,10 @@ import ast
 from My_Tools import fileInfo_push_pull as info_pp
 
 def get_namespace(obj):
-    obj_namespace = obj.namespaceList()[0]
+    #obj_namespace = obj.namespaceList()[0]
+
+    # Using string-base name space finding incase ref is unloaded
+    obj_namespace = obj.rpartition(':')[0]
 
     return obj_namespace
 
@@ -16,15 +19,6 @@ def get_ref(obj_namespace):
 
     return ref_node
 
-# def make_dic(ref_list, ref_group_name="Group_1"):
-#     ref_dic = {ref_group_name: ref_list}
-#
-#     return ref_dic
-
-# def add_to_fileInfo(refs_key, dic):
-#     str_dic = str_ify(dic)
-#     pm.fileInfo(refs_key, str_dic)
-
 
 def check_ref_grps_exists(refs_key):
     try:
@@ -34,26 +28,33 @@ def check_ref_grps_exists(refs_key):
         return False
 
 
+def load_ref(node_list):
+    for node in node_list:
+        ref_obj = pm.FileReference(refnode=node)
+        ref_obj.load()
 
-def load_ref():
-    pass
+def unload_ref(node_list):
+    for node in node_list:
+        ref_obj = pm.FileReference(refnode=node)
+        ref_obj.unload()
 
-def unload_ref():
-    pass
 
-
-def main(info_key="My_Refs", info_grp="spikes"):
+def main(info_key="my_references", info_grp="env", unload=0, load=0):
     data = info_pp.read_grp(info_key, info_grp)
-    objs = pm.ls(data)
-
     ref_node_list = []
 
-    for obj in objs:
-        n_spc = get_namespace(objs)
+    for obj in data:
+        n_spc = get_namespace(obj)
         ref_node = get_ref(n_spc)
 
         ref_node_list.append(ref_node)
 
     print(f"Ref nodes: {ref_node_list}")
 
-main()
+    if load == 1:
+        load_ref(ref_node_list)
+
+    if unload == 1:
+        unload_ref(ref_node_list)
+
+main(info_key="my_references", info_grp="env", unload=1, load=0)
