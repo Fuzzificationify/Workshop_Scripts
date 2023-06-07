@@ -1,0 +1,669 @@
+//Maya Preference 2022 (Release 1)
+//
+//
+
+nameCommand
+	-annotation "graphEditorNameCommand"
+	-sourceType "mel"
+	-command ("graphEditor")
+	graphEditorNameCommand;
+
+nameCommand
+	-annotation "deleteKeyNameCommand"
+	-sourceType "mel"
+	-command ("deleteKey")
+	deleteKeyNameCommand;
+
+nameCommand
+	-annotation "SelectRigNameCommand"
+	-sourceType "mel"
+	-command ("SelectRig")
+	SelectRigNameCommand;
+
+nameCommand
+	-annotation "Clear Channel Box Selection - Clear channel selection in Channel Box so curves from Timeline are no longer filtered."
+	-sourceType "mel"
+	-command ("python(\"from animBot._api.core import CORE as ANIMBOT_CORE; ANIMBOT_CORE.trigger.channelBoxExtraTools_clearChannelBoxSelection();\");")
+	animBot_channelBoxExtraTools_clearChannelBoxSelection;
+
+nameCommand
+	-annotation "Blend to Neighbors: 100% - That's probably the old aTools signature. Blend your current pose to the neighbor poses."
+	-sourceType "mel"
+	-command ("python(\"from animBot._api.core import CORE as ANIMBOT_CORE; ANIMBOT_CORE.trigger.tweenSlider_blendToNeighbors_100();\");")
+	animBot_tweenSlider_blendToNeighbors_100;
+
+nameCommand
+	-annotation "Blend to Neighbors: -100% - That's probably the old aTools signature. Blend your current pose to the neighbor poses."
+	-sourceType "mel"
+	-command ("python(\"from animBot._api.core import CORE as ANIMBOT_CORE; ANIMBOT_CORE.trigger.tweenSlider_blendToNeighbors_neg100();\");")
+	animBot_tweenSlider_blendToNeighbors_neg100;
+
+nameCommand
+	-annotation "Select_TranslatesNameCommand"
+	-sourceType "mel"
+	-command ("Select_Translates")
+	Select_TranslatesNameCommand;
+
+nameCommand
+	-annotation "Select_RotatesNameCommand"
+	-sourceType "mel"
+	-command ("Select_Rotates")
+	Select_RotatesNameCommand;
+
+nameCommand
+	-annotation "selection_filter_AllNameCommand"
+	-sourceType "mel"
+	-command ("selection_filter_All")
+	selection_filter_AllNameCommand;
+
+nameCommand
+	-annotation "selection_filter_CurvesNameCommand"
+	-sourceType "mel"
+	-command ("selection_filter_Curves")
+	selection_filter_CurvesNameCommand;
+
+nameCommand
+	-annotation "euler_filterNameCommand"
+	-sourceType "mel"
+	-command ("euler_filter")
+	euler_filterNameCommand;
+
+nameCommand
+	-annotation "Global Offset - Changes will propagate to the whole animation."
+	-sourceType "mel"
+	-command ("python(\"from animBot._api.core import CORE as ANIMBOT_CORE; ANIMBOT_CORE.trigger.globalOffset_globalOffset();\");")
+	animBot_globalOffset_globalOffset;
+
+nameCommand
+	-annotation "Frame_TimeSlider_GrowNameCommand"
+	-sourceType "mel"
+	-command ("Frame_TimeSlider_Grow")
+	Frame_TimeSlider_GrowNameCommand;
+
+nameCommand
+	-annotation "Frame_Time_Slider_ShrinkNameCommand"
+	-sourceType "mel"
+	-command ("Frame_Time_Slider_Shrink")
+	Frame_Time_Slider_ShrinkNameCommand;
+
+nameCommand
+	-annotation "ReselectAnimLayerBecauseTheySuckNameCommand"
+	-sourceType "mel"
+	-command ("ReselectAnimLayerBecauseTheySuck")
+	ReselectAnimLayerBecauseTheySuckNameCommand;
+
+nameCommand
+	-annotation "SelectObjectsOnLayerNameCommand"
+	-sourceType "mel"
+	-command ("SelectObjectsOnLayer")
+	SelectObjectsOnLayerNameCommand;
+
+nameCommand
+	-annotation "PlaybackToggleNameCommand"
+	-sourceType "mel"
+	-command ("PlaybackToggle")
+	PlaybackToggleNameCommand;
+
+nameCommand
+	-annotation "GoToMinFrameNameCommand"
+	-sourceType "mel"
+	-command ("GoToMinFrame")
+	GoToMinFrameNameCommand;
+
+nameCommand
+	-annotation "PlayblastWindowNameCommand"
+	-sourceType "mel"
+	-command ("PlayblastWindow")
+	PlayblastWindowNameCommand;
+
+nameCommand
+	-annotation "PlayblastOptionsNameCommand"
+	-sourceType "mel"
+	-command ("PlayblastOptions")
+	PlayblastOptionsNameCommand;
+
+nameCommand
+	-annotation "Select_AnimCurvesNameCommand"
+	-sourceType "mel"
+	-command ("Select_AnimCurves")
+	Select_AnimCurvesNameCommand;
+
+nameCommand
+	-annotation "Isolate_animCurveNameCommand"
+	-sourceType "mel"
+	-command ("Isolate_animCurve")
+	Isolate_animCurveNameCommand;
+
+nameCommand
+	-annotation "Smart Snap Keys - Snap keys in a non-destructive manner."
+	-sourceType "mel"
+	-command ("python(\"from animBot._api.core import CORE as ANIMBOT_CORE; ANIMBOT_CORE.trigger.animCurveExtraTools_smartSnapKeys();\");")
+	animBot_animCurveExtraTools_smartSnapKeys;
+
+nameCommand
+	-annotation "WS_LocatorNameCommand"
+	-sourceType "mel"
+	-command ("Create_Locator_As_Ctrlr")
+	WS_LocatorNameCommand;
+
+nameCommand
+	-annotation "Smooth Rough: -100% - Soften your animation curve or make it harsh."
+	-sourceType "mel"
+	-command ("python(\"from animBot._api.core import CORE as ANIMBOT_CORE; ANIMBOT_CORE.trigger.keySlider_smoothRough_neg100();\");")
+	animBot_keySlider_smoothRough_neg100;
+
+nameCommand
+	-annotation "Simplify Bake Keys: -5% - Simplify (remove keys) or bake (add keys) your animation curve."
+	-sourceType "mel"
+	-command ("python(\"from animBot._api.core import CORE as ANIMBOT_CORE; ANIMBOT_CORE.trigger.keySlider_simplifyBakeKeys_neg5();\");")
+	animBot_keySlider_simplifyBakeKeys_neg5;
+
+nameCommand
+	-annotation "Create_Constrained_LocatorNameCommand"
+	-sourceType "mel"
+	-command ("Create_Locator_Constrained")
+	Create_Constrained_LocatorNameCommand;
+
+nameCommand
+	-annotation "my_simple_bakeNameCommand"
+	-sourceType "mel"
+	-command ("my_simple_bake")
+	my_simple_bakeNameCommand;
+
+nameCommand
+	-annotation "Create_LocatorNameCommand"
+	-sourceType "mel"
+	-command ("Create_Locator")
+	Create_LocatorNameCommand;
+
+nameCommand
+	-annotation "Parent_Constrain_no_offsetNameCommand"
+	-sourceType "mel"
+	-command ("Parent_Constrain_no_offset")
+	Parent_Constrain_no_offsetNameCommand;
+
+nameCommand
+	-annotation "Parent_Constrain_With_OffsetNameCommand"
+	-sourceType "mel"
+	-command ("Parent_Constrain_With_Offset")
+	Parent_Constrain_With_OffsetNameCommand;
+
+nameCommand
+	-annotation "Delete_ConstraintNameCommand"
+	-sourceType "mel"
+	-command ("Delete_Constraint")
+	Delete_ConstraintNameCommand;
+
+nameCommand
+	-annotation "Locators_On_Off"
+	-sourceType "mel"
+	-command ("locators_toggle_command")
+	Locators_On_OffNameCommand;
+
+nameCommand
+	-annotation "Screen Z Manipulation"
+	-sourceType "mel"
+	-command ("python(\"screenZManipulator.screenZManipulator(fromWhere='hotKey')\")")
+	screenZManipulatorNameCommand;
+
+nameCommand
+	-annotation "my_outlinerNameCommand"
+	-sourceType "mel"
+	-command ("my_outliner")
+	my_outlinerNameCommand;
+
+nameCommand
+	-annotation "here_and_after_keysNameCommand"
+	-sourceType "mel"
+	-command ("here_and_after_keys")
+	here_and_after_keysNameCommand;
+
+nameCommand
+	-annotation "clearGraphKeySelectNameCommand"
+	-sourceType "mel"
+	-command ("clearGraphKeySelect")
+	clearGraphKeySelectNameCommand;
+
+nameCommand
+	-annotation "animCurveSnapNameCommand"
+	-sourceType "mel"
+	-command ("animCurveSnap")
+	animCurveSnapNameCommand;
+
+nameCommand
+	-annotation "Select_Active_animCurveNameCommand"
+	-sourceType "mel"
+	-command ("Select_Active_animCurve")
+	Select_Active_animCurveNameCommand;
+
+nameCommand
+	-annotation "panel_transform_graphNameCommand"
+	-sourceType "mel"
+	-command ("panel_transform_graph")
+	panel_transform_graphNameCommand;
+
+nameCommand
+	-annotation "panel_tranform_modelPNameCommand"
+	-sourceType "mel"
+	-command ("panel_tranform_modelP")
+	panel_tranform_modelPNameCommand;
+
+nameCommand
+	-annotation "Sliders Pop Up - A convenient pop up window to use animBot Sliders on the spot."
+	-sourceType "mel"
+	-command ("python(\"from animBot._api.core import CORE as ANIMBOT_CORE; ANIMBOT_CORE.trigger.globalTools_slidersPopUp();\");")
+	animBot_globalTools_slidersPopUp;
+
+nameCommand
+	-annotation "Mirror to Left - Mirror a pose exclusively to the left side rig controls."
+	-sourceType "mel"
+	-command ("python(\"from animBot._api.core import CORE as ANIMBOT_CORE; ANIMBOT_CORE.trigger.mirror_mirrorToLeft();\");")
+	animBot_mirror_mirrorToLeft;
+
+nameCommand
+	-annotation "pause_viewportNameCommand"
+	-sourceType "mel"
+	-command ("pause_viewport")
+	pause_viewportNameCommand;
+
+nameCommand
+	-annotation "unPause_viewportNameCommand"
+	-sourceType "mel"
+	-command ("unPause_viewport")
+	unPause_viewportNameCommand;
+
+nameCommand
+	-annotation "MoveNearestPickedKeyToolActivateNameCommand"
+	-sourceType "mel"
+	-command ("MoveNearestPickedKeyToolActivate")
+	MoveNearestPickedKeyToolActivateNameCommand;
+
+nameCommand
+	-annotation "AddKeyToolActivateNameCommand"
+	-sourceType "mel"
+	-command ("AddKeyToolActivate")
+	AddKeyToolActivateNameCommand;
+
+nameCommand
+	-annotation "InsertKeyToolActivateNameCommand"
+	-sourceType "mel"
+	-command ("InsertKeyToolActivate")
+	InsertKeyToolActivateNameCommand;
+
+nameCommand
+	-annotation "Locator_as_Local_ControllerNameCommand"
+	-sourceType "mel"
+	-command ("Locator_as_Local_Controller")
+	Locator_as_Local_ControllerNameCommand;
+
+nameCommand
+	-annotation "Locator_as_local_childNameCommand"
+	-sourceType "mel"
+	-command ("Locator_as_local_child")
+	Locator_as_local_childNameCommand;
+
+nameCommand
+	-annotation "RegionKeysToolNameCommand"
+	-sourceType "mel"
+	-command ("RegionKeysTool")
+	RegionKeysToolNameCommand;
+
+nameCommand
+	-annotation "TimeDraggerToolActivateNameCommand"
+	-sourceType "mel"
+	-command ("TimeDraggerToolActivate")
+	TimeDraggerToolActivateNameCommand;
+
+nameCommand
+	-annotation "TimeDraggerToolDeactivateNameCommand"
+	-sourceType "mel"
+	-command ("TimeDraggerToolDeactivate")
+	TimeDraggerToolDeactivateNameCommand;
+
+nameCommand
+	-annotation "slide_key_leftNameCommand"
+	-sourceType "mel"
+	-command ("slide_key_left")
+	slide_key_leftNameCommand;
+
+nameCommand
+	-annotation "delete_slider_cuvNameCommand"
+	-sourceType "mel"
+	-command ("delete_slider_cuv")
+	delete_slider_cuvNameCommand;
+
+nameCommand
+	-annotation "PinSelectionNameCommand"
+	-sourceType "mel"
+	-command ("PinSelection")
+	PinSelectionNameCommand;
+
+nameCommand
+	-annotation "simplify_keysNameCommand"
+	-sourceType "mel"
+	-command ("simplify_keys")
+	simplify_keysNameCommand;
+
+nameCommand
+	-annotation "toggle_loc_visNameCommand"
+	-sourceType "mel"
+	-command ("toggle_loc_vis")
+	toggle_loc_visNameCommand;
+
+nameCommand
+	-annotation "SetKeyNameCommand"
+	-sourceType "mel"
+	-command ("SetKey")
+	SetKeyNameCommand;
+
+nameCommand
+	-annotation "del_keys_from_channelbox_ALLNameCommand"
+	-sourceType "mel"
+	-command ("del_keys_from_channelbox_ALL")
+	del_keys_from_channelbox_ALLNameCommand;
+
+nameCommand
+	-annotation "zero_sel_channelsNameCommand"
+	-sourceType "mel"
+	-command ("zero_sel_channels")
+	zero_sel_channelsNameCommand;
+
+nameCommand
+	-annotation "toggle_animcurve_curve_selNameCommand"
+	-sourceType "mel"
+	-command ("toggle_animcurve_curve_sel")
+	toggle_animcurve_curve_selNameCommand;
+
+nameCommand
+	-annotation "Zero_keys_from_graph_selNameCommand"
+	-sourceType "mel"
+	-command ("Zero_keys_from_graph_sel")
+	Zero_keys_from_graph_selNameCommand;
+
+nameCommand
+	-annotation "Select_Current_Time_KeysNameCommand"
+	-sourceType "mel"
+	-command ("Select_Current_Time_Keys")
+	Select_Current_Time_KeysNameCommand;
+
+nameCommand
+	-annotation "centre_sel_to_camNameCommand"
+	-sourceType "mel"
+	-command ("centre_sel_to_cam")
+	centre_sel_to_camNameCommand;
+
+nameCommand
+	-annotation "Select_Constrained_ConnectionNameCommand"
+	-sourceType "mel"
+	-command ("Select_Constrained_Connection")
+	Select_Constrained_ConnectionNameCommand;
+
+nameCommand
+	-annotation "ak_pull_95NameCommand"
+	-sourceType "mel"
+	-command ("up_val_tweaker")
+	ak_pull_95NameCommand;
+
+nameCommand
+	-annotation "ak_push_95NameCommand"
+	-sourceType "mel"
+	-command ("down_val_tweaker")
+	ak_push_95NameCommand;
+
+nameCommand
+	-annotation "deselect_current_time_keysNameCommand"
+	-sourceType "mel"
+	-command ("deselect_current_time_keys")
+	deselect_current_time_keysNameCommand;
+
+nameCommand
+	-annotation "Keys_step_forwardNameCommand"
+	-sourceType "mel"
+	-command ("Keys_step_forward")
+	Keys_step_forwardNameCommand;
+
+nameCommand
+	-annotation "Keys_Step_backNameCommand"
+	-sourceType "mel"
+	-command ("Keys_Step_back")
+	Keys_Step_backNameCommand;
+
+nameCommand
+	-annotation "Keys_expand_forwardNameCommand"
+	-sourceType "mel"
+	-command ("Keys_expand_forward")
+	Keys_expand_forwardNameCommand;
+
+nameCommand
+	-annotation "Keys_expand_backNameCommand"
+	-sourceType "mel"
+	-command ("Keys_expand_back")
+	Keys_expand_backNameCommand;
+
+nameCommand
+	-annotation "Keys_subtract_backNameCommand"
+	-sourceType "mel"
+	-command ("Keys_subtract_back")
+	Keys_subtract_backNameCommand;
+
+nameCommand
+	-annotation "Keys_subtract_forwardNameCommand"
+	-sourceType "mel"
+	-command ("Keys_subtract_forward")
+	Keys_subtract_forwardNameCommand;
+
+nameCommand
+	-annotation "TangentsAutoNameCommand"
+	-sourceType "mel"
+	-command ("TangentsAuto")
+	TangentsAutoNameCommand;
+
+nameCommand
+	-annotation "Select_All_TransformsNameCommand"
+	-sourceType "mel"
+	-command ("Select_All_Transforms")
+	Select_All_TransformsNameCommand;
+
+nameCommand
+	-annotation "Move_key_pos1NameCommand"
+	-sourceType "mel"
+	-command ("Move_key_pos1")
+	Move_key_pos1NameCommand;
+
+nameCommand
+	-annotation "Move_key_neg1NameCommand"
+	-sourceType "mel"
+	-command ("Move_key_neg1")
+	Move_key_neg1NameCommand;
+
+nameCommand
+	-annotation "NextKeyNameCommand"
+	-sourceType "mel"
+	-command ("NextKey")
+	NextKeyNameCommand;
+
+nameCommand
+	-annotation "NextFrameNameCommand"
+	-sourceType "mel"
+	-command ("NextFrame")
+	NextFrameNameCommand;
+
+nameCommand
+	-annotation "PreviousKeyNameCommand"
+	-sourceType "mel"
+	-command ("PreviousKey")
+	PreviousKeyNameCommand;
+
+nameCommand
+	-annotation "PreviousFrameNameCommand"
+	-sourceType "mel"
+	-command ("PreviousFrame")
+	PreviousFrameNameCommand;
+
+nameCommand
+	-annotation "previous_frameNameCommand"
+	-sourceType "mel"
+	-command ("previous_frame")
+	previous_frameNameCommand;
+
+nameCommand
+	-annotation "next_frameNameCommand"
+	-sourceType "mel"
+	-command ("next_frame")
+	next_frameNameCommand;
+
+nameCommand
+	-annotation "previous_keyNameCommand"
+	-sourceType "mel"
+	-command ("previous_key")
+	previous_keyNameCommand;
+
+nameCommand
+	-annotation "next_keyNameCommand"
+	-sourceType "mel"
+	-command ("next_key")
+	next_keyNameCommand;
+
+nameCommand
+	-annotation "UndoNameCommand"
+	-sourceType "mel"
+	-command ("Undo")
+	UndoNameCommand;
+
+nameCommand
+	-annotation "slide_key_rightNameCommand"
+	-sourceType "mel"
+	-command ("slide_key_right")
+	slide_key_rightNameCommand;
+
+nameCommand
+	-annotation "refresh_channel_selectionNameCommand"
+	-sourceType "mel"
+	-command ("refresh_channel_selection")
+	refresh_channel_selectionNameCommand;
+
+nameCommand
+	-annotation "set_time_back_24NameCommand"
+	-sourceType "mel"
+	-command ("set_time_back_24")
+	set_time_back_24NameCommand;
+
+nameCommand
+	-annotation "set_time_to_closest_selNameCommand"
+	-sourceType "mel"
+	-command ("set_time_to_closest_sel")
+	set_time_to_closest_selNameCommand;
+
+nameCommand
+	-annotation "Select_non_trans_channelsNameCommand"
+	-sourceType "mel"
+	-command ("Select_non_trans_channels")
+	Select_non_trans_channelsNameCommand;
+
+nameCommand
+	-annotation "Negative_Share_keysNameCommand"
+	-sourceType "mel"
+	-command ("Negative_Share_keys")
+	Negative_Share_keysNameCommand;
+
+nameCommand
+	-annotation "set_keys_in_rangeNameCommand"
+	-sourceType "mel"
+	-command ("set_keys_in_range")
+	set_keys_in_rangeNameCommand;
+
+nameCommand
+	-annotation "key_soft_splitNameCommand"
+	-sourceType "mel"
+	-command ("key_soft_split")
+	key_soft_splitNameCommand;
+
+nameCommand
+	-annotation "TangentAutoNameCommand"
+	-sourceType "mel"
+	-command ("TangentAuto")
+	TangentAutoNameCommand;
+
+nameCommand
+	-annotation "TangentLinearNameCommand"
+	-sourceType "mel"
+	-command ("TangentLinear")
+	TangentLinearNameCommand;
+
+nameCommand
+	-annotation "select_feet_stuffsNameCommand"
+	-sourceType "mel"
+	-command ("select_feet_stuffs")
+	select_feet_stuffsNameCommand;
+
+nameCommand
+	-annotation "my_set_keyNameCommand"
+	-sourceType "mel"
+	-command ("my_set_key")
+	my_set_keyNameCommand;
+
+nameCommand
+	-annotation "channel_binary_toggleNameCommand"
+	-sourceType "mel"
+	-command ("channel_binary_toggle")
+	channel_binary_toggleNameCommand;
+
+nameCommand
+	-annotation "lattice_key_deformNameCommand"
+	-sourceType "mel"
+	-command ("lattice_key_deform_55")
+	lattice_key_deformNameCommand;
+
+nameCommand
+	-annotation "lattice_key_deform_33NameCommand"
+	-sourceType "mel"
+	-command ("lattice_key_deform_33")
+	lattice_key_deform_33NameCommand;
+
+nameCommand
+	-annotation "lattice_key_deform_55NameCommand"
+	-sourceType "mel"
+	-command ("lattice_key_deform_55")
+	lattice_key_deform_55NameCommand;
+
+nameCommand
+	-annotation "retime_keys_from_selNameCommand"
+	-sourceType "mel"
+	-command ("retime_keys_from_sel")
+	retime_keys_from_selNameCommand;
+
+nameCommand
+	-annotation "retime_key_toolNameCommand"
+	-sourceType "mel"
+	-command ("retime_key_tool")
+	retime_key_toolNameCommand;
+
+nameCommand
+	-annotation "key_arc_selectNameCommand"
+	-sourceType "mel"
+	-command ("key_arc_select_pos")
+	key_arc_selectNameCommand;
+
+nameCommand
+	-annotation "key_arc_select_negNameCommand"
+	-sourceType "mel"
+	-command ("key_arc_select_neg")
+	key_arc_select_negNameCommand;
+
+nameCommand
+	-annotation "Locator_as_controller_in_sel_spaceNameCommand"
+	-sourceType "mel"
+	-command ("Locator_as_controller_in_sel_space")
+	Locator_as_controller_in_sel_spaceNameCommand;
+
+nameCommand
+	-annotation "Smooth Rough: -50% - Soften your animation curve or make it harsh."
+	-sourceType "mel"
+	-command ("python(\"from animBot._api.core import CORE as ANIMBOT_CORE; ANIMBOT_CORE.trigger.keySlider_smoothRough_neg50();\");")
+	animBot_keySlider_smoothRough_neg50;
+
+nameCommand
+	-annotation "threshold_cutofferNameCommand"
+	-sourceType "mel"
+	-command ("threshold_cutoffer")
+	threshold_cutofferNameCommand;
