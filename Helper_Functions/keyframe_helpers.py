@@ -13,15 +13,14 @@ def get_anim_curve():
     anim_curve = mc.keyframe(q=1, name=1, sl=1)
 
 
-def get_key_times(anim_curve, sl_keys=True):
-    if sl_keys == True:
-        all_times = mc.keyframe(anim_curve, q=1, sl=1, timeChange=1) or []
-
-    if sl_keys == False:
-        all_times = mc.keyframe(anim_curve, q=1, timeChange=1) or []
+def get_key_times(sel, sl_keys=True):
+    # Should work on obj selection or anim_curve selection
+    # Using int(sl_keys) to toggle selection flag
+    all_times = mc.keyframe(sel, q=1, sl=int(sl_keys), timeChange=1) or []
 
     if all_times == []:
-        return None
+        print("No keys on selection")
+        return None, None, None
         
     first_time, last_time = min(all_times), max(all_times)
 
@@ -30,13 +29,13 @@ def get_key_times(anim_curve, sl_keys=True):
     
 def get_key_indexs(anim_curve):
     
-    all_indxs = mc.keyframe(anim_curve, q=1, sl=1, indexValue=1) or []
-    if all_indxs == []:
+    all_key_indxs = mc.keyframe(anim_curve, q=1, sl=1, indexValue=1) or []
+    if all_key_indxs == []:
         return None
     
-    first_indx, last_indx = all_indxs[0], all_indxs[-1]
+    first_key_indx, last_key_indx = all_key_indxs[0], all_key_indxs[-1]
 
-    return first_key_indx, last_key_indx, all_keys_indxs
+    return first_key_indx, last_key_indx, all_key_indxs
     
     
 def check_timeslider_sel():
