@@ -24,20 +24,20 @@ class MyDoubleSpinBox(QtWidgets.QDoubleSpinBox):
 
 
 class DoubleClickBtn(QtWidgets.QPushButton):
-    rightClicked = QtCore.pyqtSignal()
-    doubleClicked = QtCore.pyqtSignal()
+    rightClicked = QtCore.Signal()
+    doubleClicked = QtCore.Signal()
 
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         super(DoubleClickBtn, self).__init__(parent)
         self.is_pressed = False
 
-    @QtCore.pyqtSlot()
+    @QtCore.Slot()
     def mouseDoubleClickEvent(self, event):
         self.doubleClicked.emit()
 
-    @QtCore.pyqtSlot()
+    @QtCore.Slot()
     def mousePressEvent(self, event):
-        super(DoubleClickBtn, self).mousePressEvent(event)
+        QtWidgets.QPushButton.mousePressEvent(self, event)
         if event.button() == QtCore.Qt.RightButton:
             self.rightClicked.emit()
 
