@@ -77,10 +77,15 @@ def get_my_keys():
     my_keys = []
 
     for key, val in all_info:
-        literal_val = ast.literal_eval(val)
-        if type(literal_val) == dict:
 
-            my_keys.append(key)
+        # Try / Except to catch weird data in the fileInfo node
+        try:
+            literal_val = ast.literal_eval(val)
+            if type(literal_val) == dict:
+                my_keys.append(key)
+
+        except:
+            pass
 
     return my_keys
 
@@ -110,9 +115,8 @@ def get_info_grps(info_dic):
     info_groups = info_dic.keys()
 
     return info_groups
-
-
-
+  
+  
 def get_info_grp_list(info_dic, info_grp):
     info_grp_list = info_dic[info_grp]
 
@@ -299,7 +303,7 @@ def read_grp(info_key, info_grp):
     data = read_fileInfo_grp(info_key, info_grp)
     return data
 
-#main_add()
-wop = main_read()
 
+wop = main_read()
+#main_add(info_key="my_selections", grp_name="spikes")
 #main_remove(info_key="my_selections", grp_name="spikes")
