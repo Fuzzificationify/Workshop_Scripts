@@ -153,7 +153,7 @@ class PowerBtn(QtWidgets.QPushButton):
 
     @QtCore.pyqtSlot()
     def mousePressEvent(self, event):
-        super(PowerBtn, self).mousePressEvent(event)
+        QtWidgets.QPushButton.mousePressEvent(self, event)
         if event.button() == QtCore.Qt.RightButton:
             self.rightClicked.emit()
 
