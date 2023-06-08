@@ -74,8 +74,10 @@ class FancyCopyDialog(QtWidgets.QDialog):
         # Drop down channel box
         self.source_cbox = QtWidgets.QComboBox()
         self.source_cbox.setEnabled(False)
-        self.all_channels_cb = QtWidgets.QCheckBox("All Channels")
+        self.all_channels_cb = QtWidgets.QCheckBox("All")
         self.all_channels_cb.setChecked(True)
+        self.xform_only_cb = QtWidgets.QCheckBox("Xforms")
+        self.xform_only_cb.setChecked(False)
 
         self.smart_select_btn = QtWidgets.QPushButton("")
         self.smart_select_btn.setIcon(QtGui.QIcon(":createSelectionSet.png"))
@@ -111,6 +113,8 @@ class FancyCopyDialog(QtWidgets.QDialog):
         source_cbox_layout = QtWidgets.QHBoxLayout()
         source_cbox_layout.addWidget(self.source_cbox)
         source_cbox_layout.addWidget(self.all_channels_cb)
+        source_cbox_layout.addWidget(self.xform_only_cb)
+
 
         cb_hbox = QtWidgets.QHBoxLayout()
         cb_hbox.addSpacing(12)
@@ -190,6 +194,9 @@ class FancyCopyDialog(QtWidgets.QDialog):
     def create_connections(self):
 
         self.all_channels_cb.clicked.connect(self.source_cbox_toggle)
+        self.all_channels_cb.clicked.connect(self.transform_cbs_toggle)
+        self.xform_only_cb.clicked.connect(self.source_cbox_toggle)
+        self.xform_only_cb.clicked.connect(self.xform_cbs_toggle)
         self.source_my_qlist.add_btn.clicked.connect(lambda: self.get_sel(self.source_my_qlist))
         self.source_my_qlist.add_btn.clicked.connect(lambda: self.get_attrs_from_cbox(self.source_my_qlist))
         self.source_my_qlist.add_btn.clicked.connect(lambda: self.populate_source_cbox(self.source_my_qlist))
@@ -219,17 +226,30 @@ class FancyCopyDialog(QtWidgets.QDialog):
 
 
     def source_cbox_toggle(self):
-        if self.all_channels_cb.isChecked():
+        if self.all_channels_cb.isChecked() or self.xform_only_cb.isChecked():
             self.source_cbox.setEnabled(False)
             self.target_cbox.setEnabled(False)
         else:
             self.source_cbox.setEnabled(True)
             self.target_cbox.setEnabled(True)
 
+    def xform_cbs_toggle(self):
+        if self.xform_only_cb.isChecked():
+            print('doop')
+            self.all_channels_cb.setChecked(False)
+
+    def transform_cbs_toggle(self):
+        if self.all_channels_cb.isChecked():
+            print('boom')
+            self.xform_only_cb.setChecked(False)
+
     def get_source_and_target_channel(self):
         if self.all_channels_cb.isChecked():
             self.source_channel = []
             self.target_channel = []
+        elif self.xform_only_cb.isChecked():
+            self.source_channel = ['tx', 'ty', 'tz', 'rx', 'ry', 'rz']
+            self.target_channel = ['tx', 'ty', 'tz', 'rx', 'ry', 'rz']
         else:
             self.source_channel = self.source_cbox.currentText()
             self.target_channel = self.target_cbox.currentText()
@@ -333,15 +353,8 @@ class FancyCopyDialog(QtWidgets.QDialog):
         self.all_targets = maya_helpers.smart_switch(self.source_objs, first_hit, last_hit, plus_string, minus_string)
         print("self.all_targets?", self.all_targets)
 
-
-    def copy_anim(self):
-        self.get_ui_input()
-
-        sources_list = self.source_my_qlist.qlist_sel
-        targets_list = self.target_my_qlist.qlist_sel
-
-        # Paste Keys
-        for source, target in zip(sources_list, targets_list):
+    def paste_one_to_one(self):
+        for source, target in zip(self.sources_list, self.targets_list):
             source_keys = mc.keyframe(source, q=1) or []
             if source_keys == [] and self.include_nonKeyed == False:
                 print("Skipping")
@@ -354,6 +367,32 @@ class FancyCopyDialog(QtWidgets.QDialog):
                         connect=self.connect_val, timeOffset=self.time_offset,
                         valueOffset=self.value_offset)
 
+    def paste_one_to_many(self, source):
+        source_keys = mc.keyframe(source, q=1) or []
+
+        if source_keys == [] and self.include_nonKeyed == True:
+            mc.setKeyframe(source, time=self.time_range[0])
+
+        mc.copyKey(source, time=self.time_range, attribute=self.source_channel)
+
+        for target in self.targets_list:
+
+            mc.pasteKey(target, attribute=self.target_channel, option="replace",
+                        connect=self.connect_val, timeOffset=self.time_offset,
+                        valueOffset=self.value_offset)
+
+
+     def copy_anim(self):
+        self.get_ui_input()
+
+        self.sources_list = self.source_my_qlist.qlist_sel
+        self.targets_list = self.target_my_qlist.qlist_sel
+
+        if len(self.sources_list) == 1:
+            self.paste_one_to_many(self.sources_list[0])
+
+        else:
+            self.paste_one_to_one()
 
 
 
