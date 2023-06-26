@@ -1,4 +1,0 @@
-// return selected layer
-string $Bob[] = `treeView -query -selectItem ("AnimLayerTabanimLayerEditor")`;
-// select layer
-animLayerEditorOnSelect $Bob[0] 1;
